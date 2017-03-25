@@ -22,7 +22,9 @@ public class Booking {
     @JsonDeserialize(using = InstantToMillisDeserializer.class)
     private Instant endTime;
 
-    //TODO: Booked by
+    //TODO: Booking ID
+
+    //TODO: Booked by user (userid)
 
     public Booking() {
     }

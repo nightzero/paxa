@@ -69,4 +69,10 @@ public class ResourceREST {
         }
         return resp;
     }
+
+    //TODO: Add booking
+
+    //TODO: Remove booking
+
+    //TODO: Update booking
 }
