@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SSDK bokning</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="jquery-ui/jquery-ui.min.css">
+    <script src="jquery-ui/jquery-ui.min.js"></script>
+  </head>
+  <body>
+  <div id="wrap">
+    <div id="top"></div>
+
+      <div id="content">
+      <div class="header">
+        <h1>SSDK bokning</h1>
+      </div>
+
+      <div class="middle">
+        Visar bokningar för datum: <input type="text" name="date" id="date" />
+        <br />
+sssss
+      </div>
+
+      <div id="clear"></div>
+
+    </div>
+
+    <div id="bottom"></div>
+
+  </div>
+
+  <div id="footer">
+      <a href="http://www.ssdk-karlshamn.se/">SSDK hemsida</a>
+  </div>
+
+
+  <script>
+    $("#date").datepicker({
+      dateFormat: "yy-mm-dd",
+      defaultDate: +0,
+      firstDay: 1,
+      buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
+      buttonImageOnly: true,
+      showOn: "both"
+    });
+    $("#date").datepicker('setDate', new Date());
+  </script>
+  </body>
+</html>
