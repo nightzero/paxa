@@ -21,7 +21,7 @@
       <div class="middle">
         Visar bokningar för datum: <input type="text" name="date" id="date" />
         <br />
-sssss
+        <button id="btn1" class="ui-button ui-widget ui-corner-all">Ny bokning</button>
       </div>
 
       <div id="clear"></div>
@@ -47,6 +47,11 @@ sssss
       showOn: "both"
     });
     $("#date").datepicker('setDate', new Date());
+
+    $("#btn1").click(function () {
+      alert("Button 1 was clicked!");
+    });
+
   </script>
   </body>
 </html>
