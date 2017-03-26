@@ -18,10 +18,15 @@
         <h1>SSDK bokning</h1>
       </div>
 
-      <div class="middle">
-        Visar bokningar för datum: <input type="text" name="date" id="date" />
-        <br />
-        <button id="btn1" class="ui-button ui-widget ui-corner-all">Ny bokning</button>
+      <div class="middle" id="booking_list">
+          Visar bokningar för datum: <input type="text" name="date" id="date" />
+          <br />
+          <button id="new_booking_btn" class="ui-button ui-widget ui-corner-all">Ny bokning</button>
+      </div>
+
+      <div class="middle" id="booking_create">
+          <div id="new_booking_date"></div>
+          <button id="book_btn" class="ui-button ui-widget ui-corner-all">Boka</button>
       </div>
 
       <div id="clear"></div>
@@ -38,18 +43,32 @@
 
 
   <script>
+    $(document).ready(function(){
+      $("#booking_create").toggle();
+    });
+
     $("#date").datepicker({
       dateFormat: "yy-mm-dd",
       defaultDate: +0,
       firstDay: 1,
       buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
       buttonImageOnly: true,
-      showOn: "both"
+      showOn: "both",
+      onSelect: function(dateText, inst) {
+         $( "#new_booking_date" ).empty().append('Bokar för: ' + dateText);
+      }
     });
+
     $("#date").datepicker('setDate', new Date());
 
-    $("#btn1").click(function () {
-      alert("Button 1 was clicked!");
+    $("#new_booking_btn").click(function () {
+      $( "#booking_list" ).toggle();
+      $( "#booking_create" ).toggle();
+    });
+
+    $("#book_btn").click(function () {
+      $( "#booking_list" ).toggle();
+      $( "#booking_create" ).toggle();
     });
 
   </script>
