@@ -19,13 +19,24 @@
       </div>
 
       <div class="middle" id="booking_list">
-          Visar bokningar för datum: <input type="text" name="date" id="date" />
+        <label for="date" style="display: inline-block">Visar bokningar för datum: </label>
+        <input type="text" name="date" id="date"/>
           <br />
           <button id="new_booking_btn" class="ui-button ui-widget ui-corner-all">Ny bokning</button>
       </div>
 
       <div class="middle" id="booking_create">
           <div id="new_booking_date"></div>
+
+          <label for="resource_select" style="display:block">Välj en resurs</label>
+          <select name="resource_select" id="resource_select">
+            <option>Svarten</option>
+            <option>Brum-Brum</option>
+            <option>Oxybox</option>
+            <option>Regulatorpaket 1</option>
+          </select>
+          <br />
+          <br />
           <button id="book_btn" class="ui-button ui-widget ui-corner-all">Boka</button>
       </div>
 
@@ -54,9 +65,6 @@
       buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
       buttonImageOnly: true,
       showOn: "both",
-      onSelect: function(dateText, inst) {
-         $( "#new_booking_date" ).empty().append('Bokar för: <b>' + dateText + '</b>');
-      }
     });
 
     $("#date").datepicker('setDate', new Date());
@@ -64,6 +72,8 @@
     $("#new_booking_btn").click(function () {
       $( "#booking_list" ).toggle();
       $( "#booking_create" ).toggle();
+      var currentDate = $("#date").datepicker({ dateFormat: 'yy-mm-dd' }).val();
+      $("#new_booking_date").empty().append('Bokar för: <b>' + currentDate + '</b>');
     });
 
     $("#book_btn").click(function () {
