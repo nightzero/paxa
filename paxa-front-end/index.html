@@ -8,6 +8,10 @@
 
     <link rel="stylesheet" href="jquery-ui/jquery-ui.min.css">
     <script src="jquery-ui/jquery-ui.min.js"></script>
+
+    <link rel="stylesheet" href="timepicker/jquery.timepicker.css">
+    <script src="timepicker/jquery.timepicker.min.js"></script>
+
   </head>
   <body>
   <div id="wrap">
@@ -19,7 +23,7 @@
       </div>
 
       <div class="middle" id="booking_list">
-        <label for="date" style="display: inline-block">Visar bokningar för datum: </label>
+        <label for="date" style="display: block">Visar bokningar för datum: </label>
         <input type="text" name="date" id="date"/>
           <br />
           <button id="new_booking_btn" class="ui-button ui-widget ui-corner-all">Ny bokning</button>
@@ -35,6 +39,13 @@
             <option>Oxybox</option>
             <option>Regulatorpaket 1</option>
           </select>
+          <br />
+          <br />
+          <label for="fromTime" style="display: block">Från: </label>
+          <input id="fromTime" type="text" class="time" style="vertical-align: top" />
+          <br />
+          <label for="toTime" style="display: block">Till: </label>
+          <input id="toTime" type="text" class="time" style="vertical-align: top" />
           <br />
           <br />
           <button id="book_btn" class="ui-button ui-widget ui-corner-all">Boka</button>
@@ -80,6 +91,15 @@
       $( "#booking_list" ).toggle();
       $( "#booking_create" ).toggle();
     });
+
+    $('#fromTime').timepicker({
+      'timeFormat': 'H:i'
+    });
+
+    $('#toTime').timepicker({
+      'timeFormat': 'H:i'
+    });
+
 
   </script>
   </body>
