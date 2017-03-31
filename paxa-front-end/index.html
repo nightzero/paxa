@@ -34,10 +34,10 @@
 
           <label for="resource_select" style="display:block">Välj en resurs</label>
           <select name="resource_select" id="resource_select">
-            <option>Svarten</option>
+            <!--option>Svarten</option>
             <option>Brum-Brum</option>
             <option>Oxybox</option>
-            <option>Regulatorpaket 1</option>
+            <option>Regulatorpaket 1</option -->
           </select>
           <br />
           <br />
@@ -82,10 +82,13 @@
     $("#date").datepicker('setDate', new Date());
 
     $("#new_booking_btn").click(function () {
-      $( "#booking_list" ).toggle();
-      $( "#booking_create" ).toggle();
       var currentDate = $("#date").datepicker({ dateFormat: 'yy-mm-dd' }).val();
       $("#new_booking_date").empty().append('Bokar för: <b>' + currentDate + '</b>');
+
+      $.getJSON('http://localhost:8080/paxa/allResources', populateSelectBox)
+
+      $( "#booking_list" ).toggle();
+      $( "#booking_create" ).toggle();
     });
 
     $("#book_btn").click(function () {
@@ -101,6 +104,15 @@
       'timeFormat': 'H:i'
     });
 
+    function populateSelectBox(data) {
+      var select = document.getElementById("resource_select");
+      for(var i = 0; i < data.length; i++) {
+        var el = document.createElement("option");
+        el.textContent = data[i].name;
+        el.value = data[i].id;
+        select.appendChild(el);
+      }
+    }
 
   </script>
   </body>
