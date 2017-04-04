@@ -27,19 +27,14 @@
         <input type="text" name="date" id="date"/>
           <br />
           <button id="new_booking_btn" class="ui-button ui-widget ui-corner-all">Ny bokning</button>
-          <div id="currentBookings"></div>
+          <div id="currentBookings" style="padding-top: 2em;"></div>
       </div>
 
       <div class="middle" id="booking_create">
           <div id="new_booking_date"></div>
 
           <label for="resource_select" style="display:block">Välj en resurs</label>
-          <select name="resource_select" id="resource_select">
-            <!--option>Svarten</option>
-            <option>Brum-Brum</option>
-            <option>Oxybox</option>
-            <option>Regulatorpaket 1</option -->
-          </select>
+          <select name="resource_select" id="resource_select"></select>
           <br />
           <br />
           <label for="fromTime" style="display: block">Från: </label>
@@ -126,20 +121,24 @@
     }
 
     function populateBookingsDiv(data) {
-      var bookingsDiv = document.getElementById("currentBookings");
+      var table = document.createElement("table");
+      table.innerHTML = "<th>Objekt</th><th style=\"padding: 0 2em 0 2em;\">Starttid</th><th>Sluttid</th>";
       for(var i = 0; i < data.length; i++) {
         var row = document.createElement("tr");
         var col1 = document.createElement("td");
         col1.innerHTML = data[i].resource.name;
         var col2 = document.createElement("td");
         col2.innerHTML = convertTimeStr(data[i].startTime);
+        col2.style.padding = "0 2em 0 2em";
         var col3 = document.createElement("td");
         col3.innerHTML = convertTimeStr(data[i].endTime);
         row.appendChild(col1);
         row.appendChild(col2);
         row.appendChild(col3);
-        bookingsDiv.appendChild(row);
+        table.appendChild(row);
       }
+      var bookingsDiv = document.getElementById("currentBookings");
+      bookingsDiv.appendChild(table);
     }
 
     function convertTimeStr(dateMillis) {
