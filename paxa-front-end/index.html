@@ -111,6 +111,10 @@
     });
     $('#toTime').timepicker('setTime', defaultStartTime);
 
+    function loadExistingBookings(date) {
+      $.getJSON('http://localhost:8080/paxa/bookingsAtDate/?date=2017-04-03', populateBookingsDiv)
+    }
+
     function populateSelectBox(data) {
       var select = document.getElementById("resource_select");
       for(var i = 0; i < data.length; i++) {
@@ -124,14 +128,23 @@
     function populateBookingsDiv(data) {
       var bookingsDiv = document.getElementById("currentBookings");
       for(var i = 0; i < data.length; i++) {
-        var el = document.createElement("p");
-        el.innerHTML = data[i].resource.name;
-        bookingsDiv.appendChild(el);
+        var row = document.createElement("tr");
+        var col1 = document.createElement("td");
+        col1.innerHTML = data[i].resource.name;
+        var col2 = document.createElement("td");
+        col2.innerHTML = convertTimeStr(data[i].startTime);
+        var col3 = document.createElement("td");
+        col3.innerHTML = convertTimeStr(data[i].endTime);
+        row.appendChild(col1);
+        row.appendChild(col2);
+        row.appendChild(col3);
+        bookingsDiv.appendChild(row);
       }
     }
 
-    function loadExistingBookings(date) {
-      $.getJSON('http://localhost:8080/paxa/bookingsAtDate/?date=2017-04-03', populateBookingsDiv)
+    function convertTimeStr(dateMillis) {
+      var date = new Date(dateMillis);
+      return date.getHours() + ":" + date.getMinutes();
     }
 
   </script>
