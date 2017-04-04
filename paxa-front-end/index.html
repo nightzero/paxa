@@ -27,6 +27,7 @@
         <input type="text" name="date" id="date"/>
           <br />
           <button id="new_booking_btn" class="ui-button ui-widget ui-corner-all">Ny bokning</button>
+          <div id="currentBookings"></div>
       </div>
 
       <div class="middle" id="booking_create">
@@ -70,6 +71,7 @@
 
     $(document).ready(function(){
       $("#booking_create").toggle();
+      loadExistingBookings(new Date());
     });
 
     $("#date").datepicker({
@@ -117,6 +119,19 @@
         el.value = data[i].id;
         select.appendChild(el);
       }
+    }
+
+    function populateBookingsDiv(data) {
+      var bookingsDiv = document.getElementById("currentBookings");
+      for(var i = 0; i < data.length; i++) {
+        var el = document.createElement("p");
+        el.innerHTML = data[i].resource.name;
+        bookingsDiv.appendChild(el);
+      }
+    }
+
+    function loadExistingBookings(date) {
+      $.getJSON('http://localhost:8080/paxa/bookingsAtDate/?date=2017-04-03', populateBookingsDiv)
     }
 
   </script>

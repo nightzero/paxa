@@ -64,7 +64,7 @@ public class ResourceREST {
         Timestamp timestamp = new Timestamp(date.getTime());
         List<Resource> res = readAllResources();
         List<Booking> resp = new ArrayList<Booking>();
-        for (int i=0; i < 3; i++){
+        for (int i=0; i < res.size(); i++){
             resp.add(new Booking(res.get(i), Instant.now(), Instant.now()));
         }
         return resp;
