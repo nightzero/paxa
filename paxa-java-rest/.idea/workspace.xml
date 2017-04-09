@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4abb67f3-edc8-41bc-9487-332cbabddd00" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../paxa-front-end/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../paxa-front-end/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../paxa-front-end/index.html" afterPath="$PROJECT_DIR$/../paxa-front-end/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/se/hexabit/paxa/db/ResourcesDAO.java" afterPath="$PROJECT_DIR$/src/main/java/se/hexabit/paxa/db/ResourcesDAO.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
@@ -97,12 +100,13 @@
       <file leaf-file-name="ResourcesDAO.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/se/hexabit/paxa/db/ResourcesDAO.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1076">
-              <caret line="94" column="64" lean-forward="false" selection-start-line="94" selection-start-column="64" selection-end-line="94" selection-end-column="64" />
+            <state relative-caret-position="153">
+              <caret line="21" column="118" lean-forward="false" selection-start-line="21" selection-start-column="118" selection-end-line="21" selection-end-column="118" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <marker date="1491760854911" expanded="true" signature="486:516" ph=" SELECT statement (RESOURCES)" />
-                <marker date="1491760854911" expanded="true" signature="553:596" ph=" SELECT statement (BOOKINGS)" />
+                <marker date="1491763308741" expanded="true" signature="481:511" ph=" SELECT statement (RESOURCES)" />
+                <marker date="1491763308741" expanded="true" signature="548:602" ph=" SELECT statement (BOOKINGS)" />
+                <marker date="1491763308741" expanded="true" signature="548:632" ph=" SELECT statement (BOOKINGS)" />
               </folding>
             </state>
           </provider>
@@ -131,6 +135,7 @@
     <findStrings>
       <find>RESTServiceResponseFilter</find>
       <find>package se\.hexabit\.paxa\.db\;\n\nimport java\.sql\.Connection\;\nimport java\.sql\.DriverManager\;\nimport java\.sql\.SQLException\;\n\n\/\*\*\n \* Created by night on 2017\-04\-05\.\n \*\/\npublic class ResourcesDAO \{\n\n    private Connection getConnection\(\) \{\n        Connection conn \= null\;\n        try \{\n            conn \= DriverManager\.getConnection\(\&quot;jdbc\:mysql\:\/\/localhost\/test\?\&quot; \+\n                            \&quot;user\=minty\&amp;password\=greatsqldb\&quot;\)\;\n\n            \/\/ Do something with the Connection\n            \n        \} catch \(SQLException ex\) \{\n            \/\/ handle any errors\n            System\.out\.println\(\&quot;SQLException\: \&quot; \+ ex\.getMessage\(\)\)\;\n            System\.out\.println\(\&quot;SQLState\: \&quot; \+ ex\.getSQLState\(\)\)\;\n            System\.out\.println\(\&quot;VendorError\: \&quot; \+ ex\.getErrorCode\(\)\)\;\n        \}\n        return conn\;\n    \}\n\}\n</find>
+      <find>bookingsAtDateQuery</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -1395,12 +1400,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/se/hexabit/paxa/db/ResourcesDAO.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1076">
-          <caret line="94" column="64" lean-forward="false" selection-start-line="94" selection-start-column="64" selection-end-line="94" selection-end-column="64" />
+        <state relative-caret-position="153">
+          <caret line="21" column="118" lean-forward="false" selection-start-line="21" selection-start-column="118" selection-end-line="21" selection-end-column="118" />
           <folding>
             <element signature="imports" expanded="true" />
-            <marker date="1491760854911" expanded="true" signature="486:516" ph=" SELECT statement (RESOURCES)" />
-            <marker date="1491760854911" expanded="true" signature="553:596" ph=" SELECT statement (BOOKINGS)" />
+            <marker date="1491763308741" expanded="true" signature="481:511" ph=" SELECT statement (RESOURCES)" />
+            <marker date="1491763308741" expanded="true" signature="548:602" ph=" SELECT statement (BOOKINGS)" />
+            <marker date="1491763308741" expanded="true" signature="548:632" ph=" SELECT statement (BOOKINGS)" />
           </folding>
         </state>
       </provider>

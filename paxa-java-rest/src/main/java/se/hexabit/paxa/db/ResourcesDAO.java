@@ -6,9 +6,9 @@ import se.hexabit.paxa.rest.types.Booking;
 import se.hexabit.paxa.rest.types.Resource;
 
 import java.sql.*;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -19,7 +19,7 @@ public class ResourcesDAO {
     private Logger logger = LoggerFactory.getLogger(ResourcesDAO.class);
 
     String allResourcesQuery = "SELECT id, name FROM resources";
-    String bookingsAtDateQuery = "SELECT * FROM bookings where startTime >= ?";
+    String bookingsAtDateQuery = "SELECT * FROM bookings where DATE(startTime) <= DATE(?) AND DATE(endTime) >= DATE(?)";
 
     public List<Resource> readAllResources() {
         Connection connection = getConnection();
@@ -86,6 +86,7 @@ public class ResourcesDAO {
         {
             ps = connection.prepareStatement(bookingsAtDateQuery);
             ps.setDate(1, new java.sql.Date(date.getTime()));
+            ps.setDate(2, new java.sql.Date(date.getTime()));
             rs = ps.executeQuery();
             while ( rs.next() )
             {
