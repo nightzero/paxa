@@ -93,12 +93,6 @@ public class ResourcesDAO {
                 Resource res = new Resource(resMap.get(resId), resId);
                 Timestamp startDate =  rs.getTimestamp("startTime");
                 Timestamp endDate =  rs.getTimestamp("endTime");
-                LocalDateTime x = startDate.toLocalDateTime();
-
-                System.out.println(startDate);
-                System.out.println(x);
-                System.out.println(startDate.toInstant());
-
                 resp.add(new Booking(res, startDate.toInstant(), endDate.toInstant()));
             }
         }
