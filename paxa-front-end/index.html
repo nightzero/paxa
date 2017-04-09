@@ -81,6 +81,11 @@
 
     $("#date").datepicker('setDate', new Date());
 
+    $("#date").on("change",function(){
+        var selected = $(this).val();
+        loadExistingBookings(new Date(selected));
+    });
+
     $("#new_booking_btn").click(function () {
       var currentDate = $("#date").datepicker({ dateFormat: 'yy-mm-dd' }).val();
       $("#new_booking_date").empty().append('Bokar för: <b>' + currentDate + '</b>');
@@ -107,7 +112,7 @@
     $('#toTime').timepicker('setTime', defaultStartTime);
 
     function loadExistingBookings(date) {
-      $.getJSON('http://localhost:8080/paxa/bookingsAtDate/?date=2017-04-03', populateBookingsDiv)
+      $.getJSON('http://localhost:8080/paxa/bookingsAtDate/?date=' + formatDate(date), populateBookingsDiv)
     }
 
     function populateSelectBox(data) {
@@ -138,6 +143,7 @@
         table.appendChild(row);
       }
       var bookingsDiv = document.getElementById("currentBookings");
+      bookingsDiv.innerHTML = "";
       bookingsDiv.appendChild(table);
     }
 
@@ -147,11 +153,21 @@
     }
 
     function addZero(i) {
-    if (i < 10) {
+      if (i < 10) {
         i = "0" + i;
+      }
+      return i;
     }
-    return i;
-}
+
+    function formatDate(date) {
+      month = '' + (date.getMonth() + 1),
+      day = '' + date.getDate();
+      year = date.getFullYear();
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+
+      return [year, month, day].join('-');
+    }
 
   </script>
   </body>

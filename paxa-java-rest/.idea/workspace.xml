@@ -5,7 +5,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../paxa-front-end/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../paxa-front-end/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../paxa-front-end/index.html" afterPath="$PROJECT_DIR$/../paxa-front-end/index.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/se/hexabit/paxa/db/ResourcesDAO.java" afterPath="$PROJECT_DIR$/src/main/java/se/hexabit/paxa/db/ResourcesDAO.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -100,7 +99,7 @@
       <file leaf-file-name="ResourcesDAO.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/se/hexabit/paxa/db/ResourcesDAO.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
+            <state relative-caret-position="102">
               <caret line="21" column="118" lean-forward="false" selection-start-line="21" selection-start-column="118" selection-end-line="21" selection-end-column="118" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -1400,7 +1399,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/se/hexabit/paxa/db/ResourcesDAO.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
+        <state relative-caret-position="102">
           <caret line="21" column="118" lean-forward="false" selection-start-line="21" selection-start-column="118" selection-end-line="21" selection-end-column="118" />
           <folding>
             <element signature="imports" expanded="true" />
