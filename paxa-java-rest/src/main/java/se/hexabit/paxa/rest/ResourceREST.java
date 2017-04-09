@@ -1,6 +1,7 @@
 package se.hexabit.paxa.rest;
 
 
+import se.hexabit.paxa.db.ResourcesDAO;
 import se.hexabit.paxa.rest.types.Booking;
 import se.hexabit.paxa.rest.types.Resource;
 
@@ -21,11 +22,13 @@ import java.util.List;
 @Path("paxa")
 public class ResourceREST {
 
+    private ResourcesDAO resourcesDao = new ResourcesDAO();
+
     @GET
     @Path("/allResources")
     @Produces(MediaType.APPLICATION_JSON)
     public Resource[] getAllResources() {
-        List<Resource> resp = readAllResources();
+        List<Resource> resp = resourcesDao.readAllResources();
         return resp.toArray(new Resource[resp.size()]);
     }
 
@@ -33,7 +36,7 @@ public class ResourceREST {
      * Dummy implementation. Should call DB in future
      * @return
      */
-    private List<Resource> readAllResources() {
+    private List<Resource> readAllResourcesDummy() {
         String[] hardCoded = new String[] {"Brum-Brum", "Svarten", "Oxybox"};
         List<Resource> resp = new ArrayList<Resource>();
         for (int i = 0; i < hardCoded.length; i++){
@@ -51,7 +54,7 @@ public class ResourceREST {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date dateObj = sdf.parse(date);
 
-        List<Booking> resp = readBookings(dateObj);
+        List<Booking> resp = resourcesDao.readBookings(dateObj);
         return resp.toArray(new Booking[resp.size()]);
     }
 
@@ -60,9 +63,9 @@ public class ResourceREST {
      * @param date
      * @return
      */
-    private List<Booking> readBookings(Date date) {
+    private List<Booking> readBookingsDummy(Date date) {
         Timestamp timestamp = new Timestamp(date.getTime());
-        List<Resource> res = readAllResources();
+        List<Resource> res = readAllResourcesDummy();
         List<Booking> resp = new ArrayList<Booking>();
         for (int i=0; i < res.size(); i++){
             resp.add(new Booking(res.get(i), Instant.now(), Instant.now()));

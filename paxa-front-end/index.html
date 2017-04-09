@@ -107,7 +107,7 @@
     $('#toTime').timepicker('setTime', defaultStartTime);
 
     function loadExistingBookings(date) {
-      $.getJSON('http://localhost:8080/paxa/bookingsAtDate/?date=2017-04-03', populateBookingsDiv)
+      $.getJSON('http://localhost:8080/paxa/bookingsAtDate/?date=2017-04-05', populateBookingsDiv)
     }
 
     function populateSelectBox(data) {
@@ -143,8 +143,15 @@
 
     function convertTimeStr(dateMillis) {
       var date = new Date(dateMillis);
-      return date.getHours() + ":" + date.getMinutes();
+      return addZero(date.getHours()) + ":" + addZero(date.getMinutes());
     }
+
+    function addZero(i) {
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+}
 
   </script>
   </body>
