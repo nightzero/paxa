@@ -19,7 +19,8 @@ public class ResourcesDAO {
     private Logger logger = LoggerFactory.getLogger(ResourcesDAO.class);
 
     String allResourcesQuery = "SELECT id, name FROM resources";
-    String bookingsAtDateQuery = "SELECT * FROM bookings where DATE(startTime) <= DATE(?) AND DATE(endTime) >= DATE(?)";
+    //String bookingsAtDateQuery = "SELECT * FROM bookings where DATE(startTime) <= DATE(?) AND DATE(endTime) >= DATE(?)";
+    String bookingsAtDateQuery = "SELECT b.*, r.name FROM bookings b JOIN resources r on r.id = b.resource_id where DATE(startTime) <= DATE(?) AND DATE(endTime) >= DATE(?)";
 
     public List<Resource> readAllResources() {
         Connection connection = getConnection();
@@ -76,10 +77,6 @@ public class ResourcesDAO {
 
     private List<Booking> readBookings(java.util.Date date, Connection connection) {
         List<Booking> resp = new ArrayList<Booking>();
-        List<Resource> resources = readAllResources(connection);
-        Map<Integer, String> resMap = resources.stream().collect(
-                Collectors.toMap(Resource::getId, Resource::getName));
-
         PreparedStatement ps = null;
         ResultSet rs = null;
         try
@@ -91,7 +88,8 @@ public class ResourcesDAO {
             while ( rs.next() )
             {
                 int resId = rs.getInt("resource_id");
-                Resource res = new Resource(resMap.get(resId), resId);
+                String resName = rs.getString("name");
+                Resource res = new Resource(resName, resId);
                 Timestamp startDate =  rs.getTimestamp("startTime");
                 Timestamp endDate =  rs.getTimestamp("endTime");
                 resp.add(new Booking(res, startDate.toInstant(), endDate.toInstant()));
