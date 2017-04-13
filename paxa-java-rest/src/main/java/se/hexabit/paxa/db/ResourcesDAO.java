@@ -19,8 +19,8 @@ public class ResourcesDAO {
     private Logger logger = LoggerFactory.getLogger(ResourcesDAO.class);
 
     String allResourcesQuery = "SELECT id, name FROM resources";
-    //String bookingsAtDateQuery = "SELECT * FROM bookings where DATE(startTime) <= DATE(?) AND DATE(endTime) >= DATE(?)";
     String bookingsAtDateQuery = "SELECT b.*, r.name FROM bookings b JOIN resources r on r.id = b.resource_id where DATE(startTime) <= DATE(?) AND DATE(endTime) >= DATE(?)";
+    String createNewBooking = "INSERT INTO bookings (resource_id, startTime, endTime) VALUES (?, ?, ?)";
 
     public List<Resource> readAllResources() {
         Connection connection = getConnection();
