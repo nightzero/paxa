@@ -8,10 +8,8 @@ import se.hexabit.paxa.rest.types.Resource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-
+//TODO: Show errors in REST interface?
 /**
  * Created by night on 2017-04-05.
  */
@@ -107,6 +105,41 @@ public class ResourcesDAO {
             catch (Exception e) {}
         }
         return resp;
+    }
+
+    public void createBooking(Booking booking) {
+        Connection connection = getConnection();
+        try {
+            createBooking(booking, connection);
+        }
+        finally
+        {
+            try {if (connection != null) connection.close();}
+            catch (Exception e) {}
+        }
+    }
+
+    private void createBooking(Booking booking, Connection connection) {
+        PreparedStatement ps = null;
+        try
+        {
+            ps = connection.prepareStatement(createNewBooking);
+            ps.setInt(1, booking.getResource().getId());
+            ps.setTimestamp(2, Timestamp.from(booking.getStartTime()));
+            ps.setTimestamp(3, Timestamp.from(booking.getEndTime()));
+            ps.executeUpdate();
+
+        }
+        catch (Exception e) {
+            logger.error("Error occured in interaction towards DB: ", e);
+        }
+        finally
+        {
+            try {
+                if (ps != null) ps.close();
+            }
+            catch (Exception e) {}
+        }
     }
 
     private Connection getConnection() {

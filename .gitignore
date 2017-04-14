@@ -17,4 +17,4 @@ target
 hs_err_pid*
 
 # Intellij
-*/.idea/workspace.xml
+*.idea/workspace.xml

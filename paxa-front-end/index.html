@@ -113,7 +113,7 @@
     $('#toTime').timepicker('setTime', defaultStartTime);
 
     function loadExistingBookings(date) {
-      $.getJSON('http://localhost:8080/paxa/bookingsAtDate/?date=' + formatDate(date), populateBookingsDiv)
+      $.getJSON('http://localhost:8080/paxa/bookingsAtDate/?date=' + formatDate(date), populateBookingsDiv(date))
     }
 
     function populateSelectBox(data) {
@@ -126,31 +126,47 @@
       }
     }
 
-    function populateBookingsDiv(data) {
-      var table = document.createElement("table");
-      table.innerHTML = "<th>Objekt</th><th style=\"padding: 0 2em 0 2em;\">Starttid</th><th>Sluttid</th>";
-      for(var i = 0; i < data.length; i++) {
-        var row = document.createElement("tr");
-        var col1 = document.createElement("td");
-        col1.innerHTML = data[i].resource.name;
-        var col2 = document.createElement("td");
-        col2.innerHTML = convertTimeStr(data[i].startTime);
-        col2.style.padding = "0 2em 0 2em";
-        var col3 = document.createElement("td");
-        col3.innerHTML = convertTimeStr(data[i].endTime);
-        row.appendChild(col1);
-        row.appendChild(col2);
-        row.appendChild(col3);
-        table.appendChild(row);
-      }
-      var bookingsDiv = document.getElementById("currentBookings");
-      bookingsDiv.innerHTML = "";
-      bookingsDiv.appendChild(table);
+    function populateBookingsDiv(currentDate) {
+      return function(data) {
+        var table = document.createElement("table");
+        table.innerHTML = "<th>Objekt</th><th style=\"padding: 0 2em 0 2em;\">Starttid</th><th>Sluttid</th>";
+        for(var i = 0; i < data.length; i++) {
+          var row = document.createElement("tr");
+          var col1 = document.createElement("td");
+          col1.innerHTML = data[i].resource.name;
+          var col2 = document.createElement("td");
+          col2.innerHTML = convertTimeStrWithDay(data[i].startTime, currentDate);
+          col2.style.padding = "0 2em 0 2em";
+          var col3 = document.createElement("td");
+          col3.innerHTML = convertTimeStrWithDay(data[i].endTime, currentDate);
+          row.appendChild(col1);
+          row.appendChild(col2);
+          row.appendChild(col3);
+          table.appendChild(row);
+        }
+        var bookingsDiv = document.getElementById("currentBookings");
+        bookingsDiv.innerHTML = "";
+        bookingsDiv.appendChild(table);
+      };
     }
 
     function convertTimeStr(dateMillis) {
       var date = new Date(dateMillis);
       return addZero(date.getHours()) + ":" + addZero(date.getMinutes());
+    }
+
+    function convertTimeStrWithDay(dateMillis, selectedDate) {
+      var date = new Date(dateMillis);
+      if(!sameDay(date, selectedDate)) {
+        return formatDate(date) + "  " + addZero(date.getHours()) + ":" + addZero(date.getMinutes());
+      }
+      else {
+        return addZero(date.getHours()) + ":" + addZero(date.getMinutes())
+      }
+    }
+
+    function sameDay(d1, d2) {
+      return (d1.toDateString() === d2.toDateString());
     }
 
     function addZero(i) {
