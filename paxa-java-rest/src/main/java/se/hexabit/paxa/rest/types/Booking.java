@@ -1,9 +1,10 @@
 package se.hexabit.paxa.rest.types;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import se.hexabit.paxa.rest.util.InstantToMillisDeserializer;
 import se.hexabit.paxa.rest.util.InstantToMillisSerializer;
+import se.hexabit.paxa.rest.util.LongToInstantDeserializer;
 
 import java.time.Instant;
 
@@ -15,11 +16,11 @@ public class Booking {
     private Resource resource;
 
     @JsonSerialize(using = InstantToMillisSerializer.class)
-    @JsonDeserialize(using = InstantToMillisDeserializer.class)
+    @JsonDeserialize(using = LongToInstantDeserializer.class)
     private Instant startTime;
 
     @JsonSerialize(using = InstantToMillisSerializer.class)
-    @JsonDeserialize(using = InstantToMillisDeserializer.class)
+    @JsonDeserialize(using = LongToInstantDeserializer.class)
     private Instant endTime;
 
     //TODO: Booking ID
@@ -35,26 +36,32 @@ public class Booking {
         this.endTime = endTime;
     }
 
+    @JsonProperty("resource")
     public Resource getResource() {
         return resource;
     }
 
+    @JsonProperty("resource")
     public void setResource(Resource resource) {
         this.resource = resource;
     }
 
+    @JsonProperty("startTime")
     public Instant getStartTime() {
         return startTime;
     }
 
+    @JsonProperty("startTime")
     public void setStartTime(Instant startTime) {
         this.startTime = startTime;
     }
 
+    @JsonProperty("endTime")
     public Instant getEndTime() {
         return endTime;
     }
 
+    @JsonProperty("endTime")
     public void setEndTime(Instant endTime) {
         this.endTime = endTime;
     }

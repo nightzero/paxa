@@ -5,10 +5,7 @@ import se.hexabit.paxa.db.ResourcesDAO;
 import se.hexabit.paxa.rest.types.Booking;
 import se.hexabit.paxa.rest.types.Resource;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -73,7 +70,12 @@ public class ResourceREST {
         return resp;
     }
 
-    //TODO: Add booking
+    @POST
+    @Path("/createNewBooking")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void createBooking(Booking booking) {
+        resourcesDao.createBooking(booking);
+    }
 
     //TODO: Remove booking
 

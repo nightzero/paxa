@@ -98,6 +98,15 @@
     });
 
     $("#book_btn").click(function () {
+      var currentDate = $("#date").datepicker({ dateFormat: 'yy-mm-dd' }).val();
+      var startTime = $('#fromTime').timepicker('getTime', currentDate);
+      var endTime = $('#toTime').timepicker('getTime', currentDate);
+
+      var selectElem = document.getElementById("resource_select");
+      var selectedResource = selectElem.options[selectElem.selectedIndex].value;
+
+      createNewBooking(selectedResource, startTime, endTime);
+
       $( "#booking_list" ).toggle();
       $( "#booking_create" ).toggle();
     });
@@ -148,6 +157,35 @@
         bookingsDiv.innerHTML = "";
         bookingsDiv.appendChild(table);
       };
+    }
+
+    function createNewBooking(selectedResource, startTime, endTime) {
+    //var data = JSON.stringify({resource: {id:4}, startTime:1491202800000, endTime:1491202800000});
+    var json = newBookingJson();
+    json.resource.id=selectedResource;
+    json.startTime=startTime.getTime();
+    json.endTime=endTime.getTime();
+
+      $.ajax({
+      type: "POST",
+      url: "http://localhost:8080/paxa/createNewBooking",
+      data: JSON.stringify(json),
+      success: null,
+      dataType: "json",
+      contentType: "application/json; charset=utf-8",
+      cache: false,
+      processData: false
+      });
+    }
+
+    function newBookingJson() {
+      return {
+        resource: {
+          id:null
+        },
+        startTime:null,
+        endTime:null
+      }
     }
 
     function convertTimeStr(dateMillis) {
