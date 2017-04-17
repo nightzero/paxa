@@ -2,13 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4abb67f3-edc8-41bc-9487-332cbabddd00" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/se/hexabit/paxa/rest/util/InstantToMillisDeserializer.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../paxa-front-end/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../paxa-front-end/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../paxa-front-end/index.html" afterPath="$PROJECT_DIR$/../paxa-front-end/index.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/se/hexabit/paxa/rest/ResourceREST.java" afterPath="$PROJECT_DIR$/src/main/java/se/hexabit/paxa/rest/ResourceREST.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/se/hexabit/paxa/rest/types/Booking.java" afterPath="$PROJECT_DIR$/src/main/java/se/hexabit/paxa/rest/types/Booking.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />

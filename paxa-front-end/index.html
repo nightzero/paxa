@@ -105,6 +105,7 @@
       var selectElem = document.getElementById("resource_select");
       var selectedResource = selectElem.options[selectElem.selectedIndex].value;
 
+      //Create new booking
       createNewBooking(selectedResource, startTime, endTime);
 
       $( "#booking_list" ).toggle();
@@ -160,7 +161,6 @@
     }
 
     function createNewBooking(selectedResource, startTime, endTime) {
-    //var data = JSON.stringify({resource: {id:4}, startTime:1491202800000, endTime:1491202800000});
     var json = newBookingJson();
     json.resource.id=selectedResource;
     json.startTime=startTime.getTime();
@@ -170,12 +170,17 @@
       type: "POST",
       url: "http://localhost:8080/paxa/createNewBooking",
       data: JSON.stringify(json),
-      success: null,
+      success: createNewBookingSuccess,
       dataType: "json",
       contentType: "application/json; charset=utf-8",
       cache: false,
       processData: false
       });
+    }
+
+    function createNewBookingSuccess(data, status) {
+      var currentDate = $("#date").datepicker({ dateFormat: 'yy-mm-dd' }).val();
+      loadExistingBookings(new Date(currentDate));
     }
 
     function newBookingJson() {
