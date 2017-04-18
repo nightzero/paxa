@@ -88,7 +88,7 @@
     });
 
     $("#new_booking_btn").click(function () {
-      var currentDate = $("#date").datepicker({ dateFormat: 'yy-mm-dd' }).val();
+      var currentDate = $("#date").val();
       $("#new_booking_date").empty().append('Bokar för: <b>' + currentDate + '</b>');
 
       $.getJSON('http://localhost:8080/paxa/allResources', populateSelectBox)
@@ -98,7 +98,7 @@
     });
 
     $("#book_btn").click(function () {
-      var currentDate = $("#date").datepicker({ dateFormat: 'yy-mm-dd' }).val();
+      var currentDate = $("#date").val();
       var startTime = $('#fromTime').timepicker('getTime', currentDate);
       var endTime = $('#toTime').timepicker('getTime', currentDate);
 
@@ -189,7 +189,7 @@
     }
 
     function createNewBookingSuccess(data, status) {
-      var currentDate = $("#date").datepicker({ dateFormat: 'yy-mm-dd' }).val();
+      var currentDate = $("#date").val();
       loadExistingBookings(new Date(currentDate));
     }
 
