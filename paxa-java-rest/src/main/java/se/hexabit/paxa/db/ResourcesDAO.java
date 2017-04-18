@@ -85,12 +85,13 @@ public class ResourcesDAO {
             rs = ps.executeQuery();
             while ( rs.next() )
             {
+                Long id = rs.getLong("id");
                 int resId = rs.getInt("resource_id");
                 String resName = rs.getString("name");
                 Resource res = new Resource(resName, resId);
                 Timestamp startDate =  rs.getTimestamp("startTime");
                 Timestamp endDate =  rs.getTimestamp("endTime");
-                resp.add(new Booking(res, startDate.toInstant(), endDate.toInstant()));
+                resp.add(new Booking(id, res, startDate.toInstant(), endDate.toInstant()));
             }
         }
         catch (Exception e) {

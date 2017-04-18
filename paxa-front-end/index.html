@@ -154,7 +154,7 @@
           btnSpan.setAttribute("class", "ui-icon ui-icon-trash");
           var delBtn = document.createElement("button");
           delBtn.setAttribute("id", "delete_booking_btn" + i);
-          delBtn.setAttribute("onclick", "alertDeleteBooking(" + i + ")");
+          delBtn.setAttribute("onclick", "alertDeleteBooking(" + data[i].id + ")");
           delBtn.appendChild(btnSpan);
           col4.appendChild(delBtn);
 

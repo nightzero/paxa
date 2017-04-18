@@ -65,7 +65,7 @@ public class ResourceREST {
         List<Resource> res = readAllResourcesDummy();
         List<Booking> resp = new ArrayList<Booking>();
         for (int i=0; i < res.size(); i++){
-            resp.add(new Booking(res.get(i), Instant.now(), Instant.now()));
+            resp.add(new Booking(new Long(0), res.get(i), Instant.now(), Instant.now()));
         }
         return resp;
     }
