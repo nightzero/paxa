@@ -149,9 +149,19 @@
           col2.style.padding = "0 2em 0 2em";
           var col3 = document.createElement("td");
           col3.innerHTML = convertTimeStrWithDay(data[i].endTime, currentDate);
+          var col4 = document.createElement("td");
+          var btnSpan = document.createElement("span");
+          btnSpan.setAttribute("class", "ui-icon ui-icon-trash");
+          var delBtn = document.createElement("button");
+          delBtn.setAttribute("id", "delete_booking_btn" + i);
+          delBtn.setAttribute("onclick", "alertDeleteBooking(" + i + ")");
+          delBtn.appendChild(btnSpan);
+          col4.appendChild(delBtn);
+
           row.appendChild(col1);
           row.appendChild(col2);
           row.appendChild(col3);
+          row.appendChild(col4);
           table.appendChild(row);
         }
         var bookingsDiv = document.getElementById("currentBookings");
@@ -191,6 +201,10 @@
         startTime:null,
         endTime:null
       }
+    }
+
+    function alertDeleteBooking(id) {
+      alert(id);
     }
 
     function convertTimeStr(dateMillis) {

@@ -17,4 +17,6 @@ target
 hs_err_pid*
 
 # Intellij
-*.idea/workspace.xml
+paxa-front-end/.idea/workspace.xml
+paxa-java-rest/.idea/workspace.xml
+
