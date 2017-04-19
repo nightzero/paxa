@@ -45,7 +45,8 @@
           <input id="toTime" type="text" class="time" style="vertical-align: top" />
           <br />
           <br />
-          <button id="book_btn" class="ui-button ui-widget ui-corner-all">Boka</button>
+          <button id="cancel_book_btn" class="ui-button ui-widget ui-corner-all">Avbryt</button>
+          <button id="book_btn" class="ui-button ui-widget ui-corner-all"><strong>Boka</strong></button>
       </div>
 
       <div id="clear"></div>
@@ -109,6 +110,11 @@
       //Create new booking
       createNewBooking(selectedResource, startTime, endTime);
 
+      $( "#booking_list" ).toggle();
+      $( "#booking_create" ).toggle();
+    });
+
+    $("#cancel_book_btn").click(function () {
       $( "#booking_list" ).toggle();
       $( "#booking_create" ).toggle();
     });
@@ -206,7 +212,7 @@
 
     function alertDeleteBooking(id) {
       $("#deleteBookingDialog").dialog({
-        
+
         buttons: {
           Ja: function () {
             $.ajax({
