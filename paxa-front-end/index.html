@@ -35,7 +35,7 @@
           <div id="new_booking_date"></div>
 
           <label for="resource_select" style="display:block">Välj en resurs</label>
-          <select name="resource_select" id="resource_select"></select>
+          <select id="resource_select"></select>
           <br />
           <br />
           <label for="fromTime" style="display: block">Från: </label>
@@ -69,7 +69,14 @@
 
     $(document).ready(function(){
       $("#booking_create").toggle();
+
       loadExistingBookings(new Date());
+
+      // Read all bookable resources from DB.
+      $.getJSON('http://localhost:8080/paxa/allResources', populateSelectBox);
+
+      //Reset timepickers to default value
+      resetBookingFields();
     });
 
     $("#date").datepicker({
@@ -93,8 +100,6 @@
       var currentDate = $("#date").val();
       $("#new_booking_date").empty().append('Bokar för: <b>' + currentDate + '</b>');
 
-      $.getJSON('http://localhost:8080/paxa/allResources', populateSelectBox)
-
       $( "#booking_list" ).toggle();
       $( "#booking_create" ).toggle();
     });
@@ -110,11 +115,13 @@
       //Create new booking
       createNewBooking(selectedResource, startTime, endTime);
 
+      resetBookingFields();
       $( "#booking_list" ).toggle();
       $( "#booking_create" ).toggle();
     });
 
     $("#cancel_book_btn").click(function () {
+      resetBookingFields();
       $( "#booking_list" ).toggle();
       $( "#booking_create" ).toggle();
     });
@@ -122,12 +129,16 @@
     $('#fromTime').timepicker({
       'timeFormat': 'H:i'
     });
-    $('#fromTime').timepicker('setTime', defaultStartTime);
 
     $('#toTime').timepicker({
       'timeFormat': 'H:i'
     });
-    $('#toTime').timepicker('setTime', defaultStartTime);
+
+    function resetBookingFields() {
+      $('#resource_select').prop('selectedIndex',0);
+      $('#fromTime').timepicker('setTime', defaultStartTime);
+      $('#toTime').timepicker('setTime', defaultStartTime);
+    }
 
     function loadExistingBookings(date) {
       $.getJSON('http://localhost:8080/paxa/bookingsAtDate/?date=' + formatDate(date), populateBookingsDiv(date))
