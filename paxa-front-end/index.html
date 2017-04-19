@@ -60,6 +60,7 @@
       <a href="http://www.ssdk-karlshamn.se/">SSDK hemsida</a>
   </div>
 
+  <div id="deleteBookingDialog" title="Radera bokning?"></div>
 
   <script>
     var defaultStartTime = new Date();
@@ -171,10 +172,10 @@
     }
 
     function createNewBooking(selectedResource, startTime, endTime) {
-    var json = newBookingJson();
-    json.resource.id=selectedResource;
-    json.startTime=startTime.getTime();
-    json.endTime=endTime.getTime();
+      var json = newBookingJson();
+      json.resource.id=selectedResource;
+      json.startTime=startTime.getTime();
+      json.endTime=endTime.getTime();
 
       $.ajax({
       type: "POST",
@@ -204,16 +205,25 @@
     }
 
     function alertDeleteBooking(id) {
-      if (confirm("Ta bort bokning?")) {
-        $.ajax({
-        url: "http://localhost:8080/paxa/deleteBooking",
-        type: "DELETE",
-        data: JSON.stringify(id),
-        success: createOrDeleteBookingSuccess,
-        dataType: "json",
-        contentType: "application/json; charset=utf-8"
-       });
-      }
+      $("#deleteBookingDialog").dialog({
+        
+        buttons: {
+          Ja: function () {
+            $.ajax({
+              url: "http://localhost:8080/paxa/deleteBooking",
+              type: "DELETE",
+              data: JSON.stringify(id),
+              success: createOrDeleteBookingSuccess,
+              dataType: "json",
+              contentType: "application/json; charset=utf-8"
+            });
+            $(this).dialog("close");
+          },
+          Nej: function () {
+            $(this).dialog("close");
+          }
+        }
+      });
     }
 
     function convertTimeStr(dateMillis) {
