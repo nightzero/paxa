@@ -19,6 +19,7 @@ public class ResourcesDAO {
     String allResourcesQuery = "SELECT id, name FROM resources";
     String bookingsAtDateQuery = "SELECT b.*, r.name FROM bookings b JOIN resources r on r.id = b.resource_id where DATE(startTime) <= DATE(?) AND DATE(endTime) >= DATE(?)";
     String createNewBooking = "INSERT INTO bookings (resource_id, startTime, endTime) VALUES (?, ?, ?)";
+    String deleteBooking = "DELETE FROM bookings WHERE id = ?";
 
     public List<Resource> readAllResources() {
         Connection connection = getConnection();
@@ -85,7 +86,7 @@ public class ResourcesDAO {
             rs = ps.executeQuery();
             while ( rs.next() )
             {
-                Long id = rs.getLong("id");
+                long id = rs.getLong("id");
                 int resId = rs.getInt("resource_id");
                 String resName = rs.getString("name");
                 Resource res = new Resource(resName, resId);
@@ -128,6 +129,39 @@ public class ResourcesDAO {
             ps.setInt(1, booking.getResource().getId());
             ps.setTimestamp(2, Timestamp.from(booking.getStartTime()));
             ps.setTimestamp(3, Timestamp.from(booking.getEndTime()));
+            ps.executeUpdate();
+
+        }
+        catch (Exception e) {
+            logger.error("Error occured in interaction towards DB: ", e);
+        }
+        finally
+        {
+            try {
+                if (ps != null) ps.close();
+            }
+            catch (Exception e) {}
+        }
+    }
+
+    public void deleteBooking(long bookingId) {
+        Connection connection = getConnection();
+        try {
+            deleteBooking(bookingId, connection);
+        }
+        finally
+        {
+            try {if (connection != null) connection.close();}
+            catch (Exception e) {}
+        }
+    }
+
+    private void deleteBooking(long bookingId, Connection connection) {
+        PreparedStatement ps = null;
+        try
+        {
+            ps = connection.prepareStatement(deleteBooking);
+            ps.setLong(1, bookingId);
             ps.executeUpdate();
 
         }

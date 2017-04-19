@@ -23,14 +23,14 @@ public class Booking {
     @JsonDeserialize(using = LongToInstantDeserializer.class)
     private Instant endTime;
 
-    private Long id = null;
+    private long id = 0;
 
     //TODO: Booked by user (userid)
 
     public Booking() {
     }
 
-    public Booking(Long id, Resource resource, Instant startTime, Instant endTime) {
+    public Booking(long id, Resource resource, Instant startTime, Instant endTime) {
         this.id = id;
         this.resource = resource;
         this.startTime = startTime;
@@ -68,12 +68,12 @@ public class Booking {
     }
 
     @JsonProperty("id")
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
     @JsonProperty("id")
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 }

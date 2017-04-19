@@ -180,7 +180,7 @@
       type: "POST",
       url: "http://localhost:8080/paxa/createNewBooking",
       data: JSON.stringify(json),
-      success: createNewBookingSuccess,
+      success: createOrDeleteBookingSuccess,
       dataType: "json",
       contentType: "application/json; charset=utf-8",
       cache: false,
@@ -188,7 +188,7 @@
       });
     }
 
-    function createNewBookingSuccess(data, status) {
+    function createOrDeleteBookingSuccess(data, status) {
       var currentDate = $("#date").val();
       loadExistingBookings(new Date(currentDate));
     }
@@ -204,7 +204,14 @@
     }
 
     function alertDeleteBooking(id) {
-      alert(id);
+      $.ajax({
+        url: "http://localhost:8080/paxa/deleteBooking",
+        type: "DELETE",
+        data: JSON.stringify(id),
+        success: createOrDeleteBookingSuccess,
+        dataType: "json",
+        contentType: "application/json; charset=utf-8"
+      });
     }
 
     function convertTimeStr(dateMillis) {

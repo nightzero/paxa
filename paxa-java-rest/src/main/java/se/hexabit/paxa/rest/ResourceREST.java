@@ -77,7 +77,12 @@ public class ResourceREST {
         resourcesDao.createBooking(booking);
     }
 
-    //TODO: Remove booking
+    @DELETE
+    @Path("/deleteBooking")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void deleteBooking(long bookingId) {
+        resourcesDao.deleteBooking(bookingId);
+    }
 
     //TODO: Update booking
 }

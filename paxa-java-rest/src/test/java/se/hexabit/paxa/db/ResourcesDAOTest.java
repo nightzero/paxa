@@ -43,4 +43,10 @@ public class ResourcesDAOTest {
         b.setEndTime(Instant.now().plus(3, ChronoUnit.HOURS));
         dao.createBooking(b);
     }
+
+    @Test
+    public void testDeleteBooking() throws Exception {
+        ResourcesDAO dao = new ResourcesDAO();
+        dao.deleteBooking(5L);
+    }
 }
