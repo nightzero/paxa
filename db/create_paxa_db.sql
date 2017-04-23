@@ -25,9 +25,9 @@ CREATE TABLE IF NOT EXISTS `bookings` (
   PRIMARY KEY (`id`),
   KEY `resFK` (`resource_id`),
   CONSTRAINT `resFK` FOREIGN KEY (`resource_id`) REFERENCES `resources` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 
--- Dumpar data för tabell paxa.bookings: ~0 rows (approximately)
+-- Dumpar data för tabell paxa.bookings: ~7 rows (approximately)
 /*!40000 ALTER TABLE `bookings` DISABLE KEYS */;
 /*!40000 ALTER TABLE `bookings` ENABLE KEYS */;
 
@@ -50,6 +50,18 @@ INSERT IGNORE INTO `resources` (`id`, `name`) VALUES
 	(7, 'Regulatorpaket4'),
 	(8, 'Regulatorpaket5');
 /*!40000 ALTER TABLE `resources` ENABLE KEYS */;
+
+-- Dumping structure for tabell paxa.users
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `profileid` tinytext NOT NULL,
+  `name` tinytext NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Dumpar data för tabell paxa.users: ~0 rows (approximately)
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
