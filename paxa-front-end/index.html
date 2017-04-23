@@ -12,28 +12,31 @@
     <link rel="stylesheet" href="timepicker/jquery.timepicker.css">
     <script src="timepicker/jquery.timepicker.min.js"></script>
 
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="208762726005-snfujhcqdcu40gkla949jlakd1pphmpk.apps.googleusercontent.com">
   </head>
   <body>
   <div id="wrap">
     <div id="top"></div>
 
       <div id="content">
-      <div class="header">
-        <h1>SSDK bokning</h1>
-      </div>
+        <div class="header">
+          <h1>SSDK bokning</h1>
+        </div>
 
-      <div class="middle" id="booking_list">
-        <label for="date" style="display: block">Visar bokningar för datum: </label>
-        <input type="text" name="date" id="date"/>
-          <br />
-          <br />
-          <button id="new_booking_btn" class="ui-button ui-widget ui-corner-all">Ny bokning</button>
-          <div id="currentBookings" style="padding-top: 2em;"></div>
-      </div>
+        <div id="login_btn" class="g-signin2" data-onsuccess="onSignIn"></div>
 
-      <div class="middle" id="booking_create">
+        <div class="middle" id="booking_list">
+          <label for="date" style="display: block">Visar bokningar för datum: </label>
+          <input type="text" name="date" id="date"/>
+            <br />
+            <br />
+            <button id="new_booking_btn" class="ui-button ui-widget ui-corner-all">Ny bokning</button>
+            <div id="currentBookings" style="padding-top: 2em;"></div>
+        </div>
+
+        <div class="middle" id="booking_create">
           <div id="new_booking_date"></div>
-
           <label for="resource_select" style="display:block">Välj en resurs</label>
           <select id="resource_select"></select>
           <br />
@@ -47,10 +50,8 @@
           <br />
           <button id="cancel_book_btn" class="ui-button ui-widget ui-corner-all">Avbryt</button>
           <button id="book_btn" class="ui-button ui-widget ui-corner-all"><strong>Boka</strong></button>
-      </div>
-
+        </div>
       <div id="clear"></div>
-
     </div>
 
     <div id="bottom"></div>
@@ -78,6 +79,14 @@
       //Reset timepickers to default value
       resetBookingFields();
     });
+
+    function onSignIn(googleUser) {
+      var profile = googleUser.getBasicProfile();
+      console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+      console.log('Name: ' + profile.getName());
+      console.log('Image URL: ' + profile.getImageUrl());
+      console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    }
 
     $("#date").datepicker({
       dateFormat: "yy-mm-dd",
