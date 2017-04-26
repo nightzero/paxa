@@ -18,6 +18,6 @@ public class CORSResponseFilter implements ContainerResponseFilter {
         headers.add("Access-Control-Allow-Origin", "*");
         //headers.add("Access-Control-Allow-Origin", "http://podcastpedia.org"); //allows CORS requests only coming from podcastpedia.org
         headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
-        headers.add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-Codingpedia");
+        headers.add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-Codingpedia, Access-Control-Allow-Headers, Authorization");
     }
 }

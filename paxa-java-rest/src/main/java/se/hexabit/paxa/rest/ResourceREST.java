@@ -2,6 +2,7 @@ package se.hexabit.paxa.rest;
 
 
 import se.hexabit.paxa.db.ResourcesDAO;
+import se.hexabit.paxa.rest.filter.Secured;
 import se.hexabit.paxa.rest.types.Booking;
 import se.hexabit.paxa.rest.types.Resource;
 
@@ -21,10 +22,12 @@ public class ResourceREST {
 
     private ResourcesDAO resourcesDao = new ResourcesDAO();
 
+    @Secured
     @GET
     @Path("/allResources")
     @Produces(MediaType.APPLICATION_JSON)
     public Resource[] getAllResources() {
+        System.err.println("Mattias9");
         List<Resource> resp = resourcesDao.readAllResources();
         return resp.toArray(new Resource[resp.size()]);
     }

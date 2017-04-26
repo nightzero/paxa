@@ -69,12 +69,21 @@
     defaultStartTime.setHours(12, 0, 0, 0);
 
     $(document).ready(function(){
+    console.log("A");
       $("#booking_create").toggle();
 
       loadExistingBookings(new Date());
 
       // Read all bookable resources from DB.
-      $.getJSON('http://localhost:8080/paxa/allResources', populateSelectBox);
+      $.ajax({
+        dataType: "json",
+        url: 'http://localhost:8080/paxa/allResources',
+        success: populateSelectBox,
+        beforeSend : function( xhr ) {
+          xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.idToken);
+        }
+      });
+      //$.getJSON('http://localhost:8080/paxa/allResources', populateSelectBox);
 
       //Reset timepickers to default value
       resetBookingFields();
@@ -82,6 +91,9 @@
 
     function onSignIn(googleUser) {
       var profile = googleUser.getBasicProfile();
+      sessionStorage.idToken = googleUser.getAuthResponse().id_token;
+
+      console.log("ID_Token:" + googleUser.getAuthResponse().id_token);
       console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
       console.log('Name: ' + profile.getName());
       console.log('Image URL: ' + profile.getImageUrl());
@@ -204,14 +216,14 @@
       json.endTime=endTime.getTime();
 
       $.ajax({
-      type: "POST",
-      url: "http://localhost:8080/paxa/createNewBooking",
-      data: JSON.stringify(json),
-      success: createOrDeleteBookingSuccess,
-      dataType: "json",
-      contentType: "application/json; charset=utf-8",
-      cache: false,
-      processData: false
+        type: "POST",
+        url: "http://localhost:8080/paxa/createNewBooking",
+        data: JSON.stringify(json),
+        success: createOrDeleteBookingSuccess,
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        cache: false,
+        processData: false
       });
     }
 
