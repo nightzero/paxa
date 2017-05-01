@@ -6,14 +6,11 @@ import se.hexabit.paxa.rest.filter.Secured;
 import se.hexabit.paxa.rest.types.Booking;
 import se.hexabit.paxa.rest.types.Resource;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -22,27 +19,12 @@ public class ResourceREST {
 
     private ResourcesDAO resourcesDao = new ResourcesDAO();
 
-    @Secured
     @GET
     @Path("/allResources")
     @Produces(MediaType.APPLICATION_JSON)
     public Resource[] getAllResources() {
-        System.err.println("Mattias9");
         List<Resource> resp = resourcesDao.readAllResources();
         return resp.toArray(new Resource[resp.size()]);
-    }
-
-    /**
-     * Dummy implementation. Should call DB in future
-     * @return
-     */
-    private List<Resource> readAllResourcesDummy() {
-        String[] hardCoded = new String[] {"Brum-Brum", "Svarten", "Oxybox"};
-        List<Resource> resp = new ArrayList<Resource>();
-        for (int i = 0; i < hardCoded.length; i++){
-            resp.add(new Resource(hardCoded[i], i));
-        }
-        return resp;
     }
 
     @GET
@@ -58,31 +40,20 @@ public class ResourceREST {
         return resp.toArray(new Booking[resp.size()]);
     }
 
-    /**
-     * Dummy implementation. Should call DB in future
-     * @param date
-     * @return
-     */
-    private List<Booking> readBookingsDummy(Date date) {
-        Timestamp timestamp = new Timestamp(date.getTime());
-        List<Resource> res = readAllResourcesDummy();
-        List<Booking> resp = new ArrayList<Booking>();
-        for (int i=0; i < res.size(); i++){
-            resp.add(new Booking(new Long(0), res.get(i), Instant.now(), Instant.now()));
-        }
-        return resp;
-    }
-
     @POST
     @Path("/createNewBooking")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void createBooking(Booking booking) {
+    @Secured
+    public void createBooking(Booking booking,@Context HttpServletRequest request) {
+        String userId = (String)request.getAttribute("userId");
+        //TODO: Store id
         resourcesDao.createBooking(booking);
     }
 
     @DELETE
     @Path("/deleteBooking")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Secured
     public void deleteBooking(long bookingId) {
         resourcesDao.deleteBooking(bookingId);
     }

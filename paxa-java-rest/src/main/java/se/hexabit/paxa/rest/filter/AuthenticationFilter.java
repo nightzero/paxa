@@ -6,10 +6,13 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
 
 import javax.annotation.Priority;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
@@ -26,7 +29,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     private String CLIENT_ID = "208762726005-snfujhcqdcu40gkla949jlakd1pphmpk.apps.googleusercontent.com";
 
     @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException {
+    public void filter(ContainerRequestContext requestContext) throws IOException, NotAuthorizedException {
         // Get the token header from the HTTP Authorization request header, Bearer
         String authHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
         String[] split = authHeader.trim().split("\\s+");
@@ -40,10 +43,10 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         }
 
         // Validate the token
-        validateToken(token);
+        validateToken(token, requestContext);
     }
 
-    private void validateToken(String token) {
+    private void validateToken(String token, ContainerRequestContext requestContext) {
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier
                 .Builder(new NetHttpTransport(), new JacksonFactory())
                 .setAudience(Arrays.asList(CLIENT_ID))
@@ -57,6 +60,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         }
         if (idToken != null) {
             GoogleIdToken.Payload payload = idToken.getPayload();
+            requestContext.setProperty("userId", payload.getSubject());
         } else {
             throw new NotAuthorizedException("Felaktigt logintoken. Har du loggat in?");
         }

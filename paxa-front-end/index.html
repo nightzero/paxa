@@ -24,7 +24,6 @@
           <h1>SSDK bokning</h1>
         </div>
 
-        <!--div id="login_btn" class="g-signin2" data-onsuccess="onSignIn"></div -->
         <div id="login_btn" class="g-signin2"></div>
 
         <div class="middle" id="booking_list">
@@ -79,7 +78,6 @@
           }
           else {
             var user = auth2.currentUser.get();
-            console.log(user.getAuthResponse().id_token);
             sessionStorage.idToken = user.getAuthResponse().id_token;
           }
         });
@@ -104,21 +102,12 @@
     defaultStartTime.setHours(12, 0, 0, 0);
 
     $(document).ready(function(){
-    console.log("A");
       $("#booking_create").toggle();
 
       loadExistingBookings(new Date());
 
       // Read all bookable resources from DB.
-      $.ajax({
-        dataType: "json",
-       url: 'http://localhost:8080/paxa/allResources',
-        success: populateSelectBox,
-        beforeSend : function( xhr ) {
-          xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.idToken);
-        }
-     });
-      //$.getJSON('http://localhost:8080/paxa/allResources', populateSelectBox);
+      $.getJSON('http://localhost:8080/paxa/allResources', populateSelectBox);
 
       //Reset timepickers to default value
       resetBookingFields();
@@ -233,27 +222,19 @@
       };
     }
 
+    function createOrDeleteBookingSuccess(data, status) {
+      var currentDate = $("#date").val();
+      loadExistingBookings(new Date(currentDate));
+    }
+
     function createNewBooking(selectedResource, startTime, endTime) {
       var json = newBookingJson();
       json.resource.id=selectedResource;
       json.startTime=startTime.getTime();
       json.endTime=endTime.getTime();
 
-      $.ajax({
-        type: "POST",
-        url: "http://localhost:8080/paxa/createNewBooking",
-        data: JSON.stringify(json),
-        success: createOrDeleteBookingSuccess,
-        dataType: "json",
-        contentType: "application/json; charset=utf-8",
-        cache: false,
-        processData: false
-      });
-    }
-
-    function createOrDeleteBookingSuccess(data, status) {
-      var currentDate = $("#date").val();
-      loadExistingBookings(new Date(currentDate));
+     secureAjaxPOST(json, "http://localhost:8080/paxa/createNewBooking",
+       createOrDeleteBookingSuccess, sessionStorage.idToken);
     }
 
     function newBookingJson() {
@@ -271,14 +252,8 @@
 
         buttons: {
           Ja: function () {
-            $.ajax({
-              url: "http://localhost:8080/paxa/deleteBooking",
-              type: "DELETE",
-              data: JSON.stringify(id),
-              success: createOrDeleteBookingSuccess,
-              dataType: "json",
-              contentType: "application/json; charset=utf-8"
-            });
+            secureAjaxDELETE(id, "http://localhost:8080/paxa/deleteBooking",
+              createOrDeleteBookingSuccess, sessionStorage.idToken);
             $(this).dialog("close");
           },
           Nej: function () {
@@ -286,6 +261,30 @@
           }
         }
       });
+    }
+
+    function secureAjaxDELETE(data, url, sCallBack, idToken) {
+      secureAjax("DELETE", data, url, sCallBack, idToken)
+    }
+
+    function secureAjaxPOST(data, url, sCallBack, idToken) {
+      secureAjax("POST", data, url, sCallBack, idToken)
+    }
+
+    function secureAjax(type, data, url, sCallBack, idToken) {
+      $.ajax({
+        type: type,
+        data: JSON.stringify(data),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        url: url,
+        success: sCallBack,
+        cache: false,
+        processData: false,
+        beforeSend : function( xhr ) {
+          xhr.setRequestHeader("Authorization", "Bearer " + idToken);
+        }
+     });
     }
 
     function convertTimeStr(dateMillis) {

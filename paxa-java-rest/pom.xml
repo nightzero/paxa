@@ -24,6 +24,13 @@
             <version>2.25.1</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.0-b05</version>
+        </dependency>
+
+
         <!-- To be able to deserialize java 8 time types -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -61,6 +68,7 @@
             <version>1.2.3</version>
         </dependency>
 
+        <!-- Google auth deps -->
         <dependency>
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>
@@ -83,6 +91,11 @@
             <artifactId>jersey-test-framework-provider-jetty</artifactId>
             <version>2.25.1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>RELEASE</version>
         </dependency>
     </dependencies>
 </project>
