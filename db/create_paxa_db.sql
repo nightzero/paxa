@@ -20,12 +20,15 @@ USE `paxa`;
 CREATE TABLE IF NOT EXISTS `bookings` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `resource_id` int(11) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
   `startTime` datetime NOT NULL,
   `endTime` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `resFK` (`resource_id`),
-  CONSTRAINT `resFK` FOREIGN KEY (`resource_id`) REFERENCES `resources` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `userFK` (`user_id`),
+  CONSTRAINT `resFK` FOREIGN KEY (`resource_id`) REFERENCES `resources` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `userFK` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- Dumpar data för tabell paxa.bookings: ~0 rows (approximately)
 /*!40000 ALTER TABLE `bookings` DISABLE KEYS */;
