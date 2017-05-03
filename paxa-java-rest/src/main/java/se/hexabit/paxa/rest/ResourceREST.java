@@ -45,9 +45,8 @@ public class ResourceREST {
     @Consumes(MediaType.APPLICATION_JSON)
     @Secured
     public void createBooking(Booking booking,@Context HttpServletRequest request) {
-        String userId = (String)request.getAttribute("userId");
-        //TODO: Store id
-        resourcesDao.createBooking(booking);
+        String profileId = (String)request.getAttribute("profileId");
+        resourcesDao.createBooking(booking, profileId);
     }
 
     @DELETE

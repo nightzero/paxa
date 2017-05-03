@@ -13,7 +13,13 @@ import java.time.Instant;
  * Created by nightzero on 2017-03-18.
  */
 public class Booking {
+    private long id = 0;
+
     private Resource resource;
+
+    private String userName;
+
+    private String email;
 
     @JsonSerialize(using = InstantToMillisSerializer.class)
     @JsonDeserialize(using = LongToInstantDeserializer.class)
@@ -23,16 +29,14 @@ public class Booking {
     @JsonDeserialize(using = LongToInstantDeserializer.class)
     private Instant endTime;
 
-    private long id = 0;
-
-    //TODO: Booked by user (userid)
-
     public Booking() {
     }
 
-    public Booking(long id, Resource resource, Instant startTime, Instant endTime) {
+    public Booking(long id, Resource resource, String userName, String email, Instant startTime, Instant endTime) {
         this.id = id;
         this.resource = resource;
+        this.userName = userName;
+        this.email = email;
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -45,6 +49,26 @@ public class Booking {
     @JsonProperty("resource")
     public void setResource(Resource resource) {
         this.resource = resource;
+    }
+
+    @JsonProperty("userName")
+    public String getUserName() {
+        return userName;
+    }
+
+    @JsonProperty("userName")
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    @JsonProperty("email")
+    public String getEmail() {
+        return email;
+    }
+
+    @JsonProperty("email")
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @JsonProperty("startTime")

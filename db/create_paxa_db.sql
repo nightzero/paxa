@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `bookings` (
   KEY `userFK` (`user_id`),
   CONSTRAINT `resFK` FOREIGN KEY (`resource_id`) REFERENCES `resources` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `userFK` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumpar data för tabell paxa.bookings: ~0 rows (approximately)
 /*!40000 ALTER TABLE `bookings` DISABLE KEYS */;
@@ -59,11 +59,12 @@ CREATE TABLE IF NOT EXISTS `users` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `profileid` varchar(255) NOT NULL,
   `name` tinytext NOT NULL,
+  `email` tinytext,
   PRIMARY KEY (`id`),
   UNIQUE KEY `profileid` (`profileid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
--- Dumpar data för tabell paxa.users: ~0 rows (approximately)
+-- Dumpar data för tabell paxa.users: ~2 rows (approximately)
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 

@@ -4,10 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.hexabit.paxa.rest.types.Booking;
 import se.hexabit.paxa.rest.types.Resource;
+import se.hexabit.paxa.rest.types.User;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 //TODO: Show errors in REST interface?
 /**
@@ -17,9 +21,11 @@ public class ResourcesDAO {
     private Logger logger = LoggerFactory.getLogger(ResourcesDAO.class);
 
     String allResourcesQuery = "SELECT id, name FROM resources";
-    String bookingsAtDateQuery = "SELECT b.*, r.name FROM bookings b JOIN resources r on r.id = b.resource_id where DATE(startTime) <= DATE(?) AND DATE(endTime) >= DATE(?)";
-    String createNewBooking = "INSERT INTO bookings (resource_id, startTime, endTime) VALUES (?, ?, ?)";
+    String bookingsAtDateQuery = "SELECT b.*, r.name AS resource_name, u.name AS user_name, u.email FROM bookings b JOIN resources r on r.id = b.resource_id JOIN users u on u.id = b.user_id where DATE(startTime) <= DATE(?) AND DATE(endTime) >= DATE(?)";
+    String createNewBooking = "INSERT INTO bookings (resource_id, user_id, startTime, endTime) VALUES (?, ?, ?)";
     String deleteBooking = "DELETE FROM bookings WHERE id = ?";
+    String lookUpUser = "SELECT id, profileid, name, email FROM users WHERE profileid = ?";
+    String createNewUser = "INSERT INTO users (profileid, name, email) VALUES (?, ?, ?)";
 
     public List<Resource> readAllResources() {
         Connection connection = getConnection();
@@ -88,11 +94,13 @@ public class ResourcesDAO {
             {
                 long id = rs.getLong("id");
                 int resId = rs.getInt("resource_id");
-                String resName = rs.getString("name");
+                String resName = rs.getString("resource_name");
                 Resource res = new Resource(resName, resId);
+                String userName = rs.getString("user_name");
+                String email = rs.getString("email");
                 Timestamp startDate =  rs.getTimestamp("startTime");
                 Timestamp endDate =  rs.getTimestamp("endTime");
-                resp.add(new Booking(id, res, startDate.toInstant(), endDate.toInstant()));
+                resp.add(new Booking(id, res, userName, email, startDate.toInstant(), endDate.toInstant()));
             }
         }
         catch (Exception e) {
@@ -109,10 +117,13 @@ public class ResourcesDAO {
         return resp;
     }
 
-    public void createBooking(Booking booking) {
+    public void createBooking(Booking booking, String profileId) {
         Connection connection = getConnection();
         try {
-            createBooking(booking, connection);
+            //TODO: getuser on profileId
+            //TODO: If not extist create new user and get it again
+            //TODO: Remove hardcoded BigInt value
+            createBooking(booking, BigInteger.ONE, connection);
         }
         finally
         {
@@ -121,7 +132,7 @@ public class ResourcesDAO {
         }
     }
 
-    private void createBooking(Booking booking, Connection connection) {
+    private void createBooking(Booking booking, BigInteger userId, Connection connection) {
         PreparedStatement ps = null;
         try
         {
@@ -144,13 +155,68 @@ public class ResourcesDAO {
         }
     }
 
+    private Optional<User> getUser(String profileID) {
+        Connection connection = getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        User resp = null;
+
+        try {
+            ps = connection.prepareStatement(lookUpUser);
+            rs = ps.executeQuery();
+            while ( rs.next() )
+            {
+                int id = rs.getInt("id");
+                String profileId =  rs.getString("profileid");
+                String name =  rs.getString("name");
+                String email =  rs.getString("email");
+                resp = new User(id, profileId, name, email);
+            }
+        }
+        catch (Exception e) {
+            logger.error("Error occured in interaction towards DB: ", e);
+        }
+        finally
+        {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+                if (connection != null) connection.close();
+            }
+            catch (Exception e) {}
+        }
+        return Optional.ofNullable(resp);
+    }
+
+    private void createUser(String profileId, String name, String email) {
+        Connection connection = getConnection();
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement(createNewUser);
+            ps.setString(1, profileId);
+            ps.setString(2, name);
+            ps.setString(3, email);
+            ps.executeUpdate();
+        }
+        catch (Exception e) {
+            logger.error("Error occured in interaction towards DB: ", e);
+        }
+        finally {
+            try {
+                if (ps != null) ps.close();
+                if (connection != null) connection.close();
+            }
+            catch (Exception e) {}
+        }
+    }
+
+
     public void deleteBooking(long bookingId) {
         Connection connection = getConnection();
         try {
             deleteBooking(bookingId, connection);
         }
-        finally
-        {
+        finally {
             try {if (connection != null) connection.close();}
             catch (Exception e) {}
         }

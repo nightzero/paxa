@@ -41,7 +41,7 @@ public class ResourcesDAOTest {
         b.setResource(r);
         b.setStartTime(Instant.now());
         b.setEndTime(Instant.now().plus(3, ChronoUnit.HOURS));
-        dao.createBooking(b);
+        dao.createBooking(b, "112233");
     }
 
     @Test
