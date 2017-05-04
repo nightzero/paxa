@@ -3,6 +3,7 @@ package se.hexabit.paxa.db;
 import org.junit.Test;
 import se.hexabit.paxa.rest.types.Booking;
 import se.hexabit.paxa.rest.types.Resource;
+import se.hexabit.paxa.rest.types.User;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -10,6 +11,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -48,5 +50,18 @@ public class ResourcesDAOTest {
     public void testDeleteBooking() throws Exception {
         ResourcesDAO dao = new ResourcesDAO();
         dao.deleteBooking(5L);
+    }
+
+    @Test
+    public void testCreateUser() throws Exception {
+        ResourcesDAO dao = new ResourcesDAO();
+        dao.createUser(dao.getConnection(),"112233", "Kalle2", "kalle2@ssdk.se");
+    }
+
+    @Test
+    public void testGetUser() {
+        ResourcesDAO dao = new ResourcesDAO();
+        Optional<User> user = dao.getUser(dao.getConnection(),"112233");
+        assertEquals(user.get().getName(), "Kalle");
     }
 }

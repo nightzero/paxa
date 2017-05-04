@@ -46,6 +46,10 @@ public class ResourceREST {
     @Secured
     public void createBooking(Booking booking,@Context HttpServletRequest request) {
         String profileId = (String)request.getAttribute("profileId");
+        String profileName = (String)request.getAttribute("profileName");
+        String profileEmail = (String)request.getAttribute("profileEmail");
+        booking.setUserName(profileName);
+        booking.setEmail(profileEmail);
         resourcesDao.createBooking(booking, profileId);
     }
 
@@ -54,6 +58,7 @@ public class ResourceREST {
     @Consumes(MediaType.APPLICATION_JSON)
     @Secured
     public void deleteBooking(long bookingId) {
+        //TODO: Only allowed to delete your own bookings!
         resourcesDao.deleteBooking(bookingId);
     }
 

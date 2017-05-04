@@ -6,7 +6,6 @@ import se.hexabit.paxa.rest.types.Booking;
 import se.hexabit.paxa.rest.types.Resource;
 import se.hexabit.paxa.rest.types.User;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,12 +19,12 @@ import java.util.Optional;
 public class ResourcesDAO {
     private Logger logger = LoggerFactory.getLogger(ResourcesDAO.class);
 
-    String allResourcesQuery = "SELECT id, name FROM resources";
-    String bookingsAtDateQuery = "SELECT b.*, r.name AS resource_name, u.name AS user_name, u.email FROM bookings b JOIN resources r on r.id = b.resource_id JOIN users u on u.id = b.user_id where DATE(startTime) <= DATE(?) AND DATE(endTime) >= DATE(?)";
-    String createNewBooking = "INSERT INTO bookings (resource_id, user_id, startTime, endTime) VALUES (?, ?, ?)";
-    String deleteBooking = "DELETE FROM bookings WHERE id = ?";
-    String lookUpUser = "SELECT id, profileid, name, email FROM users WHERE profileid = ?";
-    String createNewUser = "INSERT INTO users (profileid, name, email) VALUES (?, ?, ?)";
+    private String allResourcesQuery = "SELECT id, name FROM resources";
+    private String bookingsAtDateQuery = "SELECT b.*, r.name AS resource_name, u.name AS user_name, u.email FROM bookings b JOIN resources r on r.id = b.resource_id JOIN users u on u.id = b.user_id where DATE(startTime) <= DATE(?) AND DATE(endTime) >= DATE(?)";
+    private String createNewBooking = "INSERT INTO bookings (resource_id, user_id, startTime, endTime) VALUES (?, ?, ?, ?)";
+    private String deleteBooking = "DELETE FROM bookings WHERE id = ?";
+    private String lookUpUser = "SELECT id, profileid, name, email FROM users WHERE profileid = ?";
+    private String createNewUser = "INSERT INTO users (profileid, name, email) VALUES (?, ?, ?)";
 
     public List<Resource> readAllResources() {
         Connection connection = getConnection();
@@ -120,10 +119,12 @@ public class ResourcesDAO {
     public void createBooking(Booking booking, String profileId) {
         Connection connection = getConnection();
         try {
-            //TODO: getuser on profileId
-            //TODO: If not extist create new user and get it again
-            //TODO: Remove hardcoded BigInt value
-            createBooking(booking, BigInteger.ONE, connection);
+            Optional<User> user = getUser(connection, profileId);
+            if(!user.isPresent()) {
+                createUser(connection, profileId, booking.getUserName(), booking.getEmail());
+                user = getUser(connection, profileId);
+            }
+            createBooking(booking, user.get().getId(), connection);
         }
         finally
         {
@@ -138,8 +139,9 @@ public class ResourcesDAO {
         {
             ps = connection.prepareStatement(createNewBooking);
             ps.setInt(1, booking.getResource().getId());
-            ps.setTimestamp(2, Timestamp.from(booking.getStartTime()));
-            ps.setTimestamp(3, Timestamp.from(booking.getEndTime()));
+            ps.setString(2, userId.toString());
+            ps.setTimestamp(3, Timestamp.from(booking.getStartTime()));
+            ps.setTimestamp(4, Timestamp.from(booking.getEndTime()));
             ps.executeUpdate();
 
         }
@@ -155,18 +157,18 @@ public class ResourcesDAO {
         }
     }
 
-    private Optional<User> getUser(String profileID) {
-        Connection connection = getConnection();
+    Optional<User> getUser(Connection connection, String profileID) {
         PreparedStatement ps = null;
         ResultSet rs = null;
         User resp = null;
 
         try {
             ps = connection.prepareStatement(lookUpUser);
+            ps.setString(1, profileID);
             rs = ps.executeQuery();
             while ( rs.next() )
             {
-                int id = rs.getInt("id");
+                BigInteger id = new BigInteger(rs.getString("id"));
                 String profileId =  rs.getString("profileid");
                 String name =  rs.getString("name");
                 String email =  rs.getString("email");
@@ -181,15 +183,13 @@ public class ResourcesDAO {
             try {
                 if (rs != null) rs.close();
                 if (ps != null) ps.close();
-                if (connection != null) connection.close();
             }
             catch (Exception e) {}
         }
         return Optional.ofNullable(resp);
     }
 
-    private void createUser(String profileId, String name, String email) {
-        Connection connection = getConnection();
+    void createUser(Connection connection, String profileId, String name, String email) {
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(createNewUser);
@@ -198,13 +198,16 @@ public class ResourcesDAO {
             ps.setString(3, email);
             ps.executeUpdate();
         }
+        catch (SQLIntegrityConstraintViolationException e) {
+            //TODO: This not only hides dublicates! Also other errors!
+            logger.debug("Trying to insert duplicate: " + e);
+        }
         catch (Exception e) {
             logger.error("Error occured in interaction towards DB: ", e);
         }
         finally {
             try {
                 if (ps != null) ps.close();
-                if (connection != null) connection.close();
             }
             catch (Exception e) {}
         }
@@ -243,7 +246,7 @@ public class ResourcesDAO {
         }
     }
 
-    private Connection getConnection() {
+    Connection getConnection() {
         Connection conn = null;
         try {
             //TODO: Do not hard code host, username, password

@@ -61,6 +61,8 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         if (idToken != null) {
             GoogleIdToken.Payload payload = idToken.getPayload();
             requestContext.setProperty("profileId", payload.getSubject());
+            requestContext.setProperty("profileName",(String) payload.get("name"));
+            requestContext.setProperty("profileEmail",payload.getEmail());
         } else {
             throw new NotAuthorizedException("Felaktigt logintoken. Har du loggat in?");
         }

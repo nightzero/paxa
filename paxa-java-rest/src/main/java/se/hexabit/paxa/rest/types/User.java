@@ -1,26 +1,28 @@
 package se.hexabit.paxa.rest.types;
 
+import java.math.BigInteger;
+
 /**
  * Created by nightzero on 2017-03-20.
  */
 public class User {
-    private long id;
+    private BigInteger id;
     private String profileId;
     private String name;
     private String email;
 
-    public User(long id, String profileId, String name, String email) {
+    public User(BigInteger id, String profileId, String name, String email) {
         this.id = id;
         this.profileId = profileId;
         this.name = name;
         this.email = email;
     }
 
-    public long getId() {
+    public BigInteger getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(BigInteger id) {
         this.id = id;
     }
 
