@@ -19,38 +19,38 @@
   <div id="wrap">
     <div id="top"></div>
 
-      <div id="content">
-        <div class="header">
-          <h1>SSDK bokning</h1>
-        </div>
+    <div id="content">
+      <div class="header">
+        <h1>SSDK bokning</h1>
+      </div>
 
-        <div id="login_btn" class="g-signin2"></div>
+      <div id="login_btn" class="g-signin2"></div>
 
-        <div class="middle" id="booking_list">
-          <label for="date" style="display: block">Visar bokningar för datum: </label>
-          <input type="text" name="date" id="date"/>
-            <br />
-            <br />
-            <button id="new_booking_btn" class="ui-button ui-widget ui-corner-all">Ny bokning</button>
-            <div id="currentBookings" style="padding-top: 2em;"></div>
-        </div>
+      <div class="middle" id="booking_list">
+        <label for="date" style="display: block">Visar bokningar för datum: </label>
+        <input type="text" name="date" id="date" />
+        <br />
+        <br />
+        <button id="new_booking_btn" class="ui-button ui-widget ui-corner-all">Ny bokning</button>
+        <div id="currentBookings" style="padding-top: 2em;"></div>
+      </div>
 
-        <div class="middle" id="booking_create">
-          <div id="new_booking_date"></div>
-          <label for="resource_select" style="display:block">Välj en resurs</label>
-          <select id="resource_select"></select>
-          <br />
-          <br />
-          <label for="fromTime" style="display: block">Från: </label>
-          <input id="fromTime" type="text" class="time" style="vertical-align: top" />
-          <br />
-          <label for="toTime" style="display: block">Till: </label>
-          <input id="toTime" type="text" class="time" style="vertical-align: top" />
-          <br />
-          <br />
-          <button id="cancel_book_btn" class="ui-button ui-widget ui-corner-all">Avbryt</button>
-          <button id="book_btn" class="ui-button ui-widget ui-corner-all"><strong>Boka</strong></button>
-        </div>
+      <div class="middle" id="booking_create">
+        <div id="new_booking_date"></div>
+        <label for="resource_select" style="display:block">Välj en resurs</label>
+        <select id="resource_select"></select>
+        <br />
+        <br />
+        <label for="fromTime" style="display: block">Från: </label>
+        <input id="fromTime" type="text" class="time" style="vertical-align: top" />
+        <br />
+        <label for="toTime" style="display: block">Till: </label>
+        <input id="toTime" type="text" class="time" style="vertical-align: top" />
+        <br />
+        <br />
+        <button id="cancel_book_btn" class="ui-button ui-widget ui-corner-all">Avbryt</button>
+        <button id="book_btn" class="ui-button ui-widget ui-corner-all"><strong>Boka</strong></button>
+      </div>
       <div id="clear"></div>
     </div>
 
@@ -191,7 +191,7 @@
     function populateBookingsDiv(currentDate) {
       return function(data) {
         var table = document.createElement("table");
-        table.innerHTML = "<th>Objekt</th><th style=\"padding: 0 2em 0 2em;\">Starttid</th><th>Sluttid</th>";
+        table.innerHTML = "<th>Objekt</th><th style=\"padding: 0 2em 0 2em;\">Starttid</th><th style=\"padding: 0 2em 0 0;\">Sluttid</th><th>Namn</th><th></th>";
         for(var i = 0; i < data.length; i++) {
           var row = document.createElement("tr");
           var col1 = document.createElement("td");
@@ -201,19 +201,24 @@
           col2.style.padding = "0 2em 0 2em";
           var col3 = document.createElement("td");
           col3.innerHTML = convertTimeStrWithDay(data[i].endTime, currentDate);
+          col3.style.padding = "0 2em 0 0";
           var col4 = document.createElement("td");
+          col4.innerHTML = '<a href=\"mailto:' + data[i].email + '\">' + data[i].userName + '</a>';
+          var col5 = document.createElement("td");
           var btnSpan = document.createElement("span");
           btnSpan.setAttribute("class", "ui-icon ui-icon-trash");
           var delBtn = document.createElement("button");
           delBtn.setAttribute("id", "delete_booking_btn" + i);
           delBtn.setAttribute("onclick", "alertDeleteBooking(" + data[i].id + ")");
           delBtn.appendChild(btnSpan);
-          col4.appendChild(delBtn);
+          col5.appendChild(delBtn);
+          col5.style.padding = "0 0 0 2em";
 
           row.appendChild(col1);
           row.appendChild(col2);
           row.appendChild(col3);
           row.appendChild(col4);
+          row.appendChild(col5);
           table.appendChild(row);
         }
         var bookingsDiv = document.getElementById("currentBookings");
