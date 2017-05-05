@@ -199,8 +199,12 @@ public class ResourcesDAO {
             ps.executeUpdate();
         }
         catch (SQLIntegrityConstraintViolationException e) {
-            //TODO: This not only hides dublicates! Also other errors!
-            logger.debug("Trying to insert duplicate: " + e);
+            if(e.getErrorCode() == 1062) {
+                logger.debug("Trying to insert duplicate: " + e.getMessage());
+            }
+            else {
+                logger.error("Error occured in interaction towards DB: ", e);
+            }
         }
         catch (Exception e) {
             logger.error("Error occured in interaction towards DB: ", e);
