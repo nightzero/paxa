@@ -61,6 +61,4 @@ public class ResourceREST {
         //TODO: Only allowed to delete your own bookings!
         resourcesDao.deleteBooking(bookingId);
     }
-
-    //TODO: Update booking
 }

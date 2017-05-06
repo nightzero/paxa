@@ -8,6 +8,7 @@ import se.hexabit.paxa.rest.types.User;
 
 import java.math.BigInteger;
 import java.sql.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,8 @@ public class ResourcesDAO {
     private Logger logger = LoggerFactory.getLogger(ResourcesDAO.class);
 
     private String allResourcesQuery = "SELECT id, name FROM resources";
-    private String bookingsAtDateQuery = "SELECT b.*, r.name AS resource_name, u.name AS user_name, u.email FROM bookings b JOIN resources r on r.id = b.resource_id JOIN users u on u.id = b.user_id where DATE(startTime) <= DATE(?) AND DATE(endTime) >= DATE(?)";
+    private String bookingsAtDateQuery = "SELECT b.*, r.name AS resource_name, u.name AS user_name, u.email FROM bookings b JOIN resources r on r.id = b.resource_id JOIN users u on u.id = b.user_id WHERE DATE(startTime) <= DATE(?) AND DATE(endTime) >= DATE(?)";
+    private String bookingsExistQuery = "SELECT b.* FROM bookings b JOIN resources r on r.id = b.resource_id WHERE b.resource_id = ? AND (startTime < ?) AND (endTime > ?)";
     private String createNewBooking = "INSERT INTO bookings (resource_id, user_id, startTime, endTime) VALUES (?, ?, ?, ?)";
     private String deleteBooking = "DELETE FROM bookings WHERE id = ?";
     private String lookUpUser = "SELECT id, profileid, name, email FROM users WHERE profileid = ?";
@@ -31,8 +33,7 @@ public class ResourcesDAO {
         try {
             return readAllResources(connection);
         }
-        finally
-        {
+        finally {
             try {if (connection != null) connection.close();}
             catch (Exception e) {}
         }
@@ -56,8 +57,7 @@ public class ResourcesDAO {
         catch (Exception e) {
             logger.error("Error occured in interaction towards DB: ", e);
         }
-        finally
-        {
+        finally {
             try {
                 if (rs != null) rs.close();
                 if (ps != null) ps.close();
@@ -72,8 +72,7 @@ public class ResourcesDAO {
         try {
             return readBookings(date, connection);
         }
-        finally
-        {
+        finally {
             try {if (connection != null) connection.close();}
             catch (Exception e) {}
         }
@@ -105,8 +104,7 @@ public class ResourcesDAO {
         catch (Exception e) {
             logger.error("Error occured in interaction towards DB: ", e);
         }
-        finally
-        {
+        finally {
             try {
                 if (rs != null) rs.close();
                 if (ps != null) ps.close();
@@ -116,9 +114,42 @@ public class ResourcesDAO {
         return resp;
     }
 
-    public void createBooking(Booking booking, String profileId) {
+    boolean checkIfBookingExist(int resourceId, Instant startTime, Instant endTime, Connection connection) {
+        List<Booking> resp = new ArrayList<Booking>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = connection.prepareStatement(bookingsExistQuery);
+            ps.setInt(1, resourceId);
+            ps.setTimestamp(2, Timestamp.from(endTime));
+            ps.setTimestamp(3, Timestamp.from(startTime));
+            rs = ps.executeQuery();
+            if(rs.first()) {
+                return true;
+            }
+        }
+        catch (Exception e) {
+            logger.error("Error occured in interaction towards DB: ", e);
+        }
+        finally {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+            }
+            catch (Exception e) {}
+        }
+
+        return false;
+    }
+
+    public void createBooking(Booking booking, String profileId) throws IllegalStateException {
         Connection connection = getConnection();
         try {
+            if(checkIfBookingExist(booking.getResource().getId(), booking.getStartTime(), booking.getEndTime(), connection)) {
+                //Booking for the resource already exist in the specified time range. Raise error!
+                throw new IllegalStateException("Resursen är redan bokad i angivet tidsintervall!");
+            }
+            //Is the user already in DB, else create it first and get the generated ID.
             Optional<User> user = getUser(connection, profileId);
             if(!user.isPresent()) {
                 createUser(connection, profileId, booking.getUserName(), booking.getEmail());
@@ -126,8 +157,7 @@ public class ResourcesDAO {
             }
             createBooking(booking, user.get().getId(), connection);
         }
-        finally
-        {
+        finally {
             try {if (connection != null) connection.close();}
             catch (Exception e) {}
         }
@@ -148,8 +178,7 @@ public class ResourcesDAO {
         catch (Exception e) {
             logger.error("Error occured in interaction towards DB: ", e);
         }
-        finally
-        {
+        finally {
             try {
                 if (ps != null) ps.close();
             }
@@ -178,8 +207,7 @@ public class ResourcesDAO {
         catch (Exception e) {
             logger.error("Error occured in interaction towards DB: ", e);
         }
-        finally
-        {
+        finally {
             try {
                 if (rs != null) rs.close();
                 if (ps != null) ps.close();
@@ -241,8 +269,7 @@ public class ResourcesDAO {
         catch (Exception e) {
             logger.error("Error occured in interaction towards DB: ", e);
         }
-        finally
-        {
+        finally {
             try {
                 if (ps != null) ps.close();
             }

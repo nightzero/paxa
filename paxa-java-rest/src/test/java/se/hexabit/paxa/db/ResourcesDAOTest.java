@@ -6,7 +6,7 @@ import se.hexabit.paxa.rest.types.Resource;
 import se.hexabit.paxa.rest.types.User;
 
 import java.text.SimpleDateFormat;
-import java.time.Instant;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Date;
@@ -47,6 +47,25 @@ public class ResourcesDAOTest {
     }
 
     @Test
+    public void testCreateBookingAlreadyBooked() throws Exception {
+        ResourcesDAO dao = new ResourcesDAO();
+        Resource r = new Resource();
+        r.setId(1);
+        Booking b = new Booking();
+        b.setResource(r);
+        LocalDate localDate = LocalDate.parse("2017-05-05");
+
+        LocalDateTime localDateTime = localDate.atTime(13,0,0);
+        Instant start = localDateTime.toInstant(ZoneId.of("Europe/Stockholm").getRules().getOffset(localDateTime));
+        localDateTime = localDate.atTime(14,0,0);
+        Instant end = localDateTime.toInstant(ZoneId.of("Europe/Stockholm").getRules().getOffset(localDateTime));
+
+        b.setStartTime(start);
+        b.setEndTime(end);
+        dao.createBooking(b, "112233");
+    }
+
+    @Test
     public void testDeleteBooking() throws Exception {
         ResourcesDAO dao = new ResourcesDAO();
         dao.deleteBooking(5L);
@@ -63,5 +82,28 @@ public class ResourcesDAOTest {
         ResourcesDAO dao = new ResourcesDAO();
         Optional<User> user = dao.getUser(dao.getConnection(),"112233");
         assertEquals(user.get().getName(), "Kalle");
+    }
+
+    @Test
+    public void testCheckIfBookingExist() {
+        ResourcesDAO dao = new ResourcesDAO();
+
+        LocalDate localDate = LocalDate.parse("2017-05-05");
+
+        LocalDateTime localDateTime = localDate.atTime(13,0,0);
+        Instant start = localDateTime.toInstant(ZoneId.of("Europe/Stockholm").getRules().getOffset(localDateTime));
+        localDateTime = localDate.atTime(14,0,0);
+        Instant end = localDateTime.toInstant(ZoneId.of("Europe/Stockholm").getRules().getOffset(localDateTime));
+
+        boolean resp = dao.checkIfBookingExist(1, start, end, dao.getConnection());
+        assertTrue(resp);
+
+        localDateTime = localDate.atTime(14,0,0);
+        start = localDateTime.toInstant(ZoneId.of("Europe/Stockholm").getRules().getOffset(localDateTime));
+        localDateTime = localDate.atTime(15,0,0);
+        end = localDateTime.toInstant(ZoneId.of("Europe/Stockholm").getRules().getOffset(localDateTime));
+
+        resp = dao.checkIfBookingExist(1, start, end, dao.getConnection());
+        assertFalse(resp);
     }
 }
