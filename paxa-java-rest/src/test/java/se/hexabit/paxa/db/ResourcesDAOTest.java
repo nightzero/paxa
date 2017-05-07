@@ -68,7 +68,7 @@ public class ResourcesDAOTest {
     @Test
     public void testDeleteBooking() throws Exception {
         ResourcesDAO dao = new ResourcesDAO();
-        dao.deleteBooking(5L);
+        dao.deleteBooking(5L, "112233");
     }
 
     @Test

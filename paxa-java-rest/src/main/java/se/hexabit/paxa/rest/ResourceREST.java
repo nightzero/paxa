@@ -45,7 +45,7 @@ public class ResourceREST {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Secured
-    public void createBooking(Booking booking,@Context HttpServletRequest request) throws GenericException {
+    public void createBooking(Booking booking, @Context HttpServletRequest request) throws GenericException {
         String profileId = (String)request.getAttribute("profileId");
         String profileName = (String)request.getAttribute("profileName");
         String profileEmail = (String)request.getAttribute("profileEmail");
@@ -57,9 +57,10 @@ public class ResourceREST {
     @DELETE
     @Path("/deleteBooking")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Secured
-    public void deleteBooking(long bookingId) {
-        //TODO: Only allowed to delete your own bookings!
-        resourcesDao.deleteBooking(bookingId);
+    public void deleteBooking(long bookingId, @Context HttpServletRequest request) throws GenericException {
+        String profileId = (String)request.getAttribute("profileId");
+        resourcesDao.deleteBooking(bookingId, profileId);
     }
 }

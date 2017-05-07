@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-//TODO: Show errors in REST interface?
 /**
  * Created by night on 2017-04-05.
  */
@@ -24,8 +23,9 @@ public class ResourcesDAO {
     private String allResourcesQuery = "SELECT id, name FROM resources";
     private String bookingsAtDateQuery = "SELECT b.*, r.name AS resource_name, u.name AS user_name, u.email FROM bookings b JOIN resources r on r.id = b.resource_id JOIN users u on u.id = b.user_id WHERE DATE(startTime) <= DATE(?) AND DATE(endTime) >= DATE(?)";
     private String bookingsExistQuery = "SELECT b.* FROM bookings b JOIN resources r on r.id = b.resource_id WHERE b.resource_id = ? AND (startTime < ?) AND (endTime > ?)";
-    private String createNewBooking = "INSERT INTO bookings (resource_id, user_id, startTime, endTime) VALUES (?, ?, ?, ?)";
-    private String deleteBooking = "DELETE FROM bookings WHERE id = ?";
+    private String createNewBookingQuery = "INSERT INTO bookings (resource_id, user_id, startTime, endTime) VALUES (?, ?, ?, ?)";
+    private String deleteBookingQuery = "DELETE FROM bookings WHERE id = ?";
+    private String bookingOnProfileIdQuery = "SELECT b.id, u.profileid FROM bookings b JOIN users u on u.id = b.user_id WHERE b.id = ? AND u.profileid = ?";
     private String lookUpUser = "SELECT id, profileid, name, email FROM users WHERE profileid = ?";
     private String createNewUser = "INSERT INTO users (profileid, name, email) VALUES (?, ?, ?)";
 
@@ -168,7 +168,7 @@ public class ResourcesDAO {
         PreparedStatement ps = null;
         try
         {
-            ps = connection.prepareStatement(createNewBooking);
+            ps = connection.prepareStatement(createNewBookingQuery);
             ps.setInt(1, booking.getResource().getId());
             ps.setString(2, userId.toString());
             ps.setTimestamp(3, Timestamp.from(booking.getStartTime()));
@@ -247,8 +247,14 @@ public class ResourcesDAO {
     }
 
 
-    public void deleteBooking(long bookingId) {
+    public void deleteBooking(long bookingId, String profileId) throws GenericException {
         Connection connection = getConnection();
+
+        if(!checkIfOwningBooking(bookingId, profileId, connection)) {
+            //User is trying to delete another users booking
+            throw new GenericException("Du kan bara ta bort dina egna bokningar!");
+        }
+
         try {
             deleteBooking(bookingId, connection);
         }
@@ -258,11 +264,38 @@ public class ResourcesDAO {
         }
     }
 
+    boolean checkIfOwningBooking(long bookingId, String profileId, Connection connection) {
+        List<Booking> resp = new ArrayList<Booking>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = connection.prepareStatement(bookingOnProfileIdQuery);
+            ps.setLong(1, bookingId);
+            ps.setString(2, profileId);
+            rs = ps.executeQuery();
+            if(rs.first()) {
+                return true;
+            }
+        }
+        catch (Exception e) {
+            logger.error("Error occured in interaction towards DB: ", e);
+        }
+        finally {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+            }
+            catch (Exception e) {}
+        }
+
+        return false;
+    }
+
     private void deleteBooking(long bookingId, Connection connection) {
         PreparedStatement ps = null;
         try
         {
-            ps = connection.prepareStatement(deleteBooking);
+            ps = connection.prepareStatement(deleteBookingQuery);
             ps.setLong(1, bookingId);
             ps.executeUpdate();
 
