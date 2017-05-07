@@ -43,8 +43,9 @@ public class ResourceREST {
     @POST
     @Path("/createNewBooking")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Secured
-    public void createBooking(Booking booking,@Context HttpServletRequest request) {
+    public void createBooking(Booking booking,@Context HttpServletRequest request) throws GenericException {
         String profileId = (String)request.getAttribute("profileId");
         String profileName = (String)request.getAttribute("profileName");
         String profileEmail = (String)request.getAttribute("profileEmail");

@@ -51,8 +51,18 @@
         <button id="cancel_book_btn" class="ui-button ui-widget ui-corner-all">Avbryt</button>
         <button id="book_btn" class="ui-button ui-widget ui-corner-all"><strong>Boka</strong></button>
       </div>
-      <div id="clear"></div>
     </div>
+
+    <div class="middle" id="error_field">
+      <div class="ui-widget">
+        <div class="ui-state-error ui-corner-all" style="margin: 20px;width: 95%">
+          <span class="ui-icon ui-icon-alert" style="float: left"></span>
+          <div id="error_field_message"><strong>Alert:</strong> Sample ui-state-error style.</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="clear"></div>
 
     <div id="bottom"></div>
 
@@ -103,6 +113,7 @@
 
     $(document).ready(function(){
       $("#booking_create").toggle();
+      $("#error_field").toggle();
 
       loadExistingBookings(new Date());
 
@@ -148,10 +159,6 @@
 
       //Create new booking
       createNewBooking(selectedResource, startTime, endTime);
-
-      resetBookingFields();
-      $( "#booking_list" ).toggle();
-      $( "#booking_create" ).toggle();
     });
 
     $("#cancel_book_btn").click(function () {
@@ -228,8 +235,19 @@
     }
 
     function createOrDeleteBookingSuccess(data, status) {
+      resetBookingFields();
+      $("#error_field").hide();
+      $( "#booking_list" ).show();
+      $( "#booking_create" ).hide();
+
       var currentDate = $("#date").val();
       loadExistingBookings(new Date(currentDate));
+    }
+
+    function showError(XMLHttpRequest, textStatus, errorThrown) {
+      var errorDiv = document.getElementById("error_field_message");
+      errorDiv.innerHTML = XMLHttpRequest.responseText;
+      $("#error_field").toggle();
     }
 
     function createNewBooking(selectedResource, startTime, endTime) {
@@ -239,7 +257,7 @@
       json.endTime=endTime.getTime();
 
      secureAjaxPOST(json, "http://localhost:8080/paxa/createNewBooking",
-       createOrDeleteBookingSuccess, sessionStorage.idToken);
+       createOrDeleteBookingSuccess, showError, sessionStorage.idToken);
     }
 
     function newBookingJson() {
@@ -268,15 +286,15 @@
       });
     }
 
-    function secureAjaxDELETE(data, url, sCallBack, idToken) {
-      secureAjax("DELETE", data, url, sCallBack, idToken)
+    function secureAjaxDELETE(data, url, sCallBack, nil, idToken) {
+      secureAjax("DELETE", data, url, sCallBack, nil, idToken)
     }
 
-    function secureAjaxPOST(data, url, sCallBack, idToken) {
-      secureAjax("POST", data, url, sCallBack, idToken)
+    function secureAjaxPOST(data, url, sCallBack, eCallBack, idToken) {
+      secureAjax("POST", data, url, sCallBack, eCallBack, idToken)
     }
 
-    function secureAjax(type, data, url, sCallBack, idToken) {
+    function secureAjax(type, data, url, sCallBack, eCallBack, idToken) {
       $.ajax({
         type: type,
         data: JSON.stringify(data),
@@ -284,6 +302,7 @@
         contentType: "application/json; charset=utf-8",
         url: url,
         success: sCallBack,
+        error: eCallBack,
         cache: false,
         processData: false,
         beforeSend : function( xhr ) {

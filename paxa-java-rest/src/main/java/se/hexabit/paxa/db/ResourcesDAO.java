@@ -2,6 +2,7 @@ package se.hexabit.paxa.db;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.hexabit.paxa.rest.GenericException;
 import se.hexabit.paxa.rest.types.Booking;
 import se.hexabit.paxa.rest.types.Resource;
 import se.hexabit.paxa.rest.types.User;
@@ -142,12 +143,12 @@ public class ResourcesDAO {
         return false;
     }
 
-    public void createBooking(Booking booking, String profileId) throws IllegalStateException {
+    public void createBooking(Booking booking, String profileId) throws GenericException {
         Connection connection = getConnection();
         try {
             if(checkIfBookingExist(booking.getResource().getId(), booking.getStartTime(), booking.getEndTime(), connection)) {
                 //Booking for the resource already exist in the specified time range. Raise error!
-                throw new IllegalStateException("Resursen är redan bokad i angivet tidsintervall!");
+                throw new GenericException("Resursen är redan bokad i angivet tidsintervall!");
             }
             //Is the user already in DB, else create it first and get the generated ID.
             Optional<User> user = getUser(connection, profileId);
