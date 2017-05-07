@@ -112,8 +112,9 @@
     defaultStartTime.setHours(12, 0, 0, 0);
 
     $(document).ready(function(){
-      $("#booking_create").toggle();
-      $("#error_field").toggle();
+      $("#booking_list").show();
+      $("#booking_create").hide();
+      $("#error_field").hide();
 
       loadExistingBookings(new Date());
 
@@ -145,8 +146,8 @@
       var currentDate = $("#date").val();
       $("#new_booking_date").empty().append('Bokar för: <b>' + currentDate + '</b>');
 
-      $( "#booking_list" ).toggle();
-      $( "#booking_create" ).toggle();
+      $( "#booking_list" ).hide();
+      $( "#booking_create" ).show();
     });
 
     $("#book_btn").click(function () {
@@ -163,8 +164,8 @@
 
     $("#cancel_book_btn").click(function () {
       resetBookingFields();
-      $( "#booking_list" ).toggle();
-      $( "#booking_create" ).toggle();
+      $( "#booking_list" ).show();
+      $( "#booking_create" ).hide();
     });
 
     $('#fromTime').timepicker({
@@ -247,7 +248,7 @@
     function showError(XMLHttpRequest, textStatus, errorThrown) {
       var errorDiv = document.getElementById("error_field_message");
       errorDiv.innerHTML = XMLHttpRequest.responseText;
-      $("#error_field").toggle();
+      $("#error_field").show();
     }
 
     function createNewBooking(selectedResource, startTime, endTime) {
@@ -276,7 +277,7 @@
         buttons: {
           Ja: function () {
             secureAjaxDELETE(id, "http://localhost:8080/paxa/deleteBooking",
-              createOrDeleteBookingSuccess, sessionStorage.idToken);
+              createOrDeleteBookingSuccess, showError, sessionStorage.idToken);
             $(this).dialog("close");
           },
           Nej: function () {
@@ -286,8 +287,8 @@
       });
     }
 
-    function secureAjaxDELETE(data, url, sCallBack, nil, idToken) {
-      secureAjax("DELETE", data, url, sCallBack, nil, idToken)
+    function secureAjaxDELETE(data, url, sCallBack, eCallBack, idToken) {
+      secureAjax("DELETE", data, url, sCallBack, eCallBack, idToken)
     }
 
     function secureAjaxPOST(data, url, sCallBack, eCallBack, idToken) {
