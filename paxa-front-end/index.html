@@ -108,6 +108,7 @@
   <script src="https://apis.google.com/js/client.js?onload=initClient"></script>
 
   <script>
+    var MS_PER_MINUTE = 60000;
     var defaultStartTime = new Date();
     defaultStartTime.setHours(12, 0, 0, 0);
 
@@ -155,13 +156,14 @@
       var startTime = $('#fromTime').timepicker('getTime', currentDate);
       var endTime = $('#toTime').timepicker('getTime', currentDate);
 
-      // Validate times are correct and not in the past.
-      if(startTime >= endTime) {
+      // Validate start time is after end time.
+      if(startTime.getTime() >= endTime.getTime()) {
         showErrorStr("Sluttid måste ligga efter starttid.");
         return;
       }
-      if(startTime < new Date()) {
-        showErrorStr("Det går ej att boka innan dagens datum. Lev i nuet!");
+      // Start time is not in the past. Allow 30 minutes back in time.
+      if(startTime.getTime() + (MS_PER_MINUTE * 30) < new Date().getTime()) {
+        showErrorStr("Det går ej att boka tidigare än NU. Lev i nuet!");
         return;
       }
 
@@ -177,6 +179,8 @@
       $("#error_field").hide();
       $("#booking_list").show();
       $("#booking_create").hide();
+      var currentDate = $("#date").val();
+      loadExistingBookings(new Date(currentDate));
     });
 
     $('#fromTime').timepicker({
