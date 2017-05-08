@@ -155,8 +155,13 @@
       var startTime = $('#fromTime').timepicker('getTime', currentDate);
       var endTime = $('#toTime').timepicker('getTime', currentDate);
 
+      // Validate times are correct and not in the past.
       if(startTime >= endTime) {
         showErrorStr("Sluttid måste ligga efter starttid.");
+        return;
+      }
+      if(startTime < new Date()) {
+        showErrorStr("Det går ej att boka innan dagens datum. Lev i nuet!");
         return;
       }
 
