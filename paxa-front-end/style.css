@@ -87,6 +87,11 @@ background: #85ACF7 url('images/hidr.jpg');
 
 #login_btn {
     padding-bottom: 1em;
+    float: left;
+}
+
+#logout_btn {
+    float: right;
 }
 
 #clear {

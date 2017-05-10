@@ -15,4 +15,16 @@
         <servlet-name>RestServlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
+    <context-param>
+        <param-name>mysql.host</param-name>
+        <param-value>mysql34.unoeuro.com</param-value>
+        <param-name>mysql.port</param-name>
+        <param-value>3306</param-value>
+        <param-name>mysql.database</param-name>
+        <param-value>ssdk_karlshamn_se_db</param-value>
+        <param-name>mysql.username</param-name>
+        <param-value>ssdk_karlsh_se</param-value>
+        <param-name>mysql.password</param-name>
+        <param-value>flippe05</param-value>
+    </context-param>
 </web-app>

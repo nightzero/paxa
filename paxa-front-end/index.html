@@ -25,6 +25,7 @@
       </div>
 
       <div id="login_btn" class="g-signin2"></div>
+      <div id="logout_btn" style="display:none"><a href="#" onclick="signOut();">Logga ut</a></div>
 
       <div class="middle" id="booking_list">
         <label for="date" style="display: block">Visar bokningar för datum: </label>
@@ -85,10 +86,12 @@
           auth2.attachClickHandler('login_btn', {}, onSuccess, onFailure);
           if(auth2.isSignedIn.get() == false) {
             delete sessionStorage.idToken;
+            $("#logout_btn").hide();
           }
           else {
             var user = auth2.currentUser.get();
             sessionStorage.idToken = user.getAuthResponse().id_token;
+            $("#logout_btn").show();
           }
         });
       });
@@ -97,6 +100,8 @@
     // Handle successful sign-ins.
     var onSuccess = function(user) {
       sessionStorage.idToken = user.getAuthResponse().id_token;
+      $("#logout_btn").show();
+      $("#error_field").hide();
     };
 
     // Handle sign-in failures.
@@ -106,6 +111,17 @@
 
   </script>
   <script src="https://apis.google.com/js/client.js?onload=initClient"></script>
+
+  <script>
+    function signOut() {
+      var auth2 = gapi.auth2.getAuthInstance();
+      auth2.signOut().then(function () {
+        $("#logout_btn").hide();
+      });
+      auth2.disconnect();
+      location.reload();
+    }
+  </script>
 
   <script>
     var MS_PER_MINUTE = 60000;
@@ -147,8 +163,8 @@
       var currentDate = $("#date").val();
       $("#new_booking_date").empty().append('Bokar för: <b>' + currentDate + '</b>');
 
-      $( "#booking_list" ).hide();
-      $( "#booking_create" ).show();
+      $("#booking_list").hide();
+      $("#booking_create").show();
     });
 
     $("#book_btn").click(function () {
@@ -262,7 +278,12 @@
 
     function showError(XMLHttpRequest, textStatus, errorThrown) {
       var errorDiv = document.getElementById("error_field_message");
-      errorDiv.innerHTML = XMLHttpRequest.responseText;
+      if (XMLHttpRequest.responseText === undefined || XMLHttpRequest.responseText === "") {
+        errorDiv.innerHTML = XMLHttpRequest.statusText;
+      }
+      else {
+        errorDiv.innerHTML = XMLHttpRequest.responseText;
+      }
       $("#error_field").show();
     }
 
@@ -371,4 +392,4 @@
 
   </script>
   </body>
-</html>
+</html> 

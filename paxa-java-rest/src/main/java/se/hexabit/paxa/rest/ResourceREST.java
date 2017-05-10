@@ -6,6 +6,7 @@ import se.hexabit.paxa.rest.filter.Secured;
 import se.hexabit.paxa.rest.types.Booking;
 import se.hexabit.paxa.rest.types.Resource;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -16,8 +17,10 @@ import java.util.List;
 
 @Path("paxa")
 public class ResourceREST {
-
     private ResourcesDAO resourcesDao = new ResourcesDAO();
+
+    public ResourceREST(@Context ServletContext servletContext) {
+    }
 
     @GET
     @Path("/allResources")

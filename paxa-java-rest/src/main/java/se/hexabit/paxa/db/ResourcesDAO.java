@@ -314,10 +314,21 @@ public class ResourcesDAO {
     Connection getConnection() {
         Connection conn = null;
         try {
-            //TODO: Do not hard code host, username, password
-            //conn = DriverManager.getConnection("jdbc:mysql://localhost/paxa?user=root&password=zodiac&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/paxa?user=root&password=zodiac&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Stockholm");
-            //conn = DriverManager.getConnection("jdbc:mysql://localhost/paxa?user=root&password=zodiac&useLegacyDatetimeCode=false&serverTimezone=UTC");
+            /*
+            String hostName = context.getInitParameter("mysql.host");
+            String port = context.getInitParameter("mysql.port");
+            String database = context.getInitParameter("mysql.database");
+            String userName = context.getInitParameter("mysql.username");
+            String password = context.getInitParameter("mysql.password");
+            */
+            String hostName = "mysql34.unoeuro.com";
+            String port = "3306";
+            String database = "ssdk_karlshamn_se_db";
+            String userName = "ssdk_karlsh_se";
+            String password = "flippe05";
+
+            //conn = DriverManager.getConnection("jdbc:mysql://localhost/paxa?user=root&password=zodiac&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Stockholm");
+            conn = DriverManager.getConnection("jdbc:mysql://" + hostName + ":" + port + "/" + database +"?user=" + userName + "&password=" + password + "&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Stockholm");
         } catch (SQLException e) {
             logger.error("Error occured retreiving connection towards DB: ", e);
         }
