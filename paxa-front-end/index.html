@@ -125,6 +125,8 @@
 
   <script>
     var MS_PER_MINUTE = 60000;
+    //var HOST_URL = "http://nightzero.duckdns.org:8080"
+    var HOST_URL = "http://localhost:8080"
     var defaultStartTime = new Date();
     defaultStartTime.setHours(12, 0, 0, 0);
 
@@ -136,7 +138,7 @@
       loadExistingBookings(new Date());
 
       // Read all bookable resources from DB.
-      $.getJSON('http://localhost:8080/paxa/allResources', populateSelectBox);
+      $.getJSON(HOST_URL + '/paxa/allResources', populateSelectBox);
 
       //Reset timepickers to default value
       resetBookingFields();
@@ -214,7 +216,7 @@
     }
 
     function loadExistingBookings(date) {
-      $.getJSON('http://localhost:8080/paxa/bookingsAtDate/?date=' + formatDate(date), populateBookingsDiv(date))
+      $.getJSON(HOST_URL + '/paxa/bookingsAtDate/?date=' + formatDate(date), populateBookingsDiv(date))
     }
 
     function populateSelectBox(data) {
@@ -299,7 +301,7 @@
       json.startTime=startTime.getTime();
       json.endTime=endTime.getTime();
 
-     secureAjaxPOST(json, "http://localhost:8080/paxa/createNewBooking",
+     secureAjaxPOST(json, HOST_URL + '/paxa/createNewBooking',
        createOrDeleteBookingSuccess, showError, sessionStorage.idToken);
     }
 
@@ -318,7 +320,7 @@
 
         buttons: {
           Ja: function () {
-            secureAjaxDELETE(id, "http://localhost:8080/paxa/deleteBooking",
+            secureAjaxDELETE(id, HOST_URL + '/paxa/deleteBooking',
               createOrDeleteBookingSuccess, showError, sessionStorage.idToken);
             $(this).dialog("close");
           },
