@@ -327,8 +327,8 @@ public class ResourcesDAO {
             String userName = "ssdk_karlsh_se";
             String password = "flippe05";
 
-            //conn = DriverManager.getConnection("jdbc:mysql://localhost/paxa?user=root&password=zodiac&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Stockholm");
-            conn = DriverManager.getConnection("jdbc:mysql://" + hostName + ":" + port + "/" + database +"?user=" + userName + "&password=" + password + "&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Stockholm");
+            //conn = DriverManager.getConnection("jdbc:mysql://localhost/paxa?user=root&password=zodiac&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Stockholm");
+            conn = DriverManager.getConnection("jdbc:mysql://" + hostName + ":" + port + "/" + database +"?user=" + userName + "&password=" + password + "&useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Stockholm");
         } catch (SQLException e) {
             logger.error("Error occured retreiving connection towards DB: ", e);
         }
