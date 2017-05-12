@@ -115,8 +115,7 @@
   <script>
     function logoutSuccess() {
       $("#logout_btn").hide();
-      auth2.disconnect();
-      location.reload();
+      location.reload(true);
     }
 
     function logoutFailure() {
@@ -126,6 +125,7 @@
     function signOut() {
       var auth2 = gapi.auth2.getAuthInstance();
       auth2.signOut().then(logoutSuccess, logoutFailure);
+      auth2.disconnect();
     }
   </script>
 
