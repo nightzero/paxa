@@ -10,21 +10,18 @@ namespace paxa.Controllers
 {
     public class PaxaDBController : Controller
     {
-        public PaxaDBController(ILogger<PaxaDBController> logger)
-        {
-            _logger = logger;
-        }
-
-        private readonly ILogger _logger;
+        private readonly ILogger logger;
 
         private string allResourcesQuery = "SELECT id, name FROM resources";
         private String bookingsAtDateQuery = "SELECT b.*, r.name AS resource_name, u.name AS user_name, u.email FROM bookings b JOIN resources r on r.id = b.resource_id JOIN users u on u.id = b.user_id WHERE DATE(startTime) <= DATE(@sTime) AND DATE(endTime) >= DATE(@eTime)";
+        private String bookingsExistQuery = "SELECT b.* FROM bookings b JOIN resources r on r.id = b.resource_id WHERE b.resource_id = @rId AND (startTime < @sTime) AND (endTime > @eTime)";
 
         public string ConnectionString { get; set; }
 
         public PaxaDBController(string connectionString)
         {
             this.ConnectionString = connectionString;
+            logger = paxa.Utilities.ApplicationLogging.CreateLogger();
         }
 
         private MySqlConnection GetConnection()
@@ -70,7 +67,7 @@ namespace paxa.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError("Error occured in interaction towards DB: " + e.ToString());
+                logger.LogError("Error occured in interaction towards DB: " + e.ToString());
             }
             finally
             {
@@ -130,7 +127,7 @@ namespace paxa.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError("Error occured in interaction towards DB: " + e.ToString());
+                logger.LogError("Error occured in interaction towards DB: " + e.ToString());
             }
             finally
             {
@@ -139,6 +136,55 @@ namespace paxa.Controllers
             }
 
             return bookings;
+        }
+
+        public bool CheckIfBookingExist(int resourceId, DateTime startTime, DateTime endTime)
+        {
+            MySqlConnection con = GetConnection();
+            try
+            {
+                return CheckIfBookingExist(resourceId, startTime, endTime, con);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                    con.Dispose();
+                }
+            }
+        }
+
+        private bool CheckIfBookingExist(int resourceId, DateTime startTime, DateTime endTime, MySqlConnection con)
+        {
+            List<Booking> bookings = new List<Booking>();
+            MySqlCommand sqlCmd = null;
+            MySqlDataReader sdr = null;
+            try
+            {
+                con.Open();
+                sqlCmd = new MySqlCommand(bookingsExistQuery, con);
+                sqlCmd.Prepare();
+                sqlCmd.Parameters.AddWithValue("@rId", resourceId);
+                sqlCmd.Parameters.AddWithValue("@sTime", endTime);
+                sqlCmd.Parameters.AddWithValue("@eTime", startTime);
+                sdr = sqlCmd.ExecuteReader();
+                if (sdr.HasRows)
+                {
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Error occured in interaction towards DB: " + e.ToString());
+            }
+            finally
+            {
+                if (sdr != null) { sdr.Close(); sdr.Dispose(); }
+                if (sqlCmd != null) { sqlCmd.Dispose(); }
+            }
+
+            return false;
         }
     }
 }

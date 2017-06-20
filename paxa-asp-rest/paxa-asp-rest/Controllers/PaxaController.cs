@@ -24,5 +24,7 @@ namespace paxa.Controllers
         {
             return dao.ReadBookings(date);
         }
+
+
     }
 }

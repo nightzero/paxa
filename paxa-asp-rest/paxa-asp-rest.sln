@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "paxa-asp-rest", "paxa-asp-rest\paxa-asp-rest.csproj", "{92037A95-F701-44D7-B191-29DC53AB66B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaxaUnitTest", "PaxaUnitTest\PaxaUnitTest.csproj", "{ED2D3AE7-94F3-4E6B-9607-D1C14365706A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{92037A95-F701-44D7-B191-29DC53AB66B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92037A95-F701-44D7-B191-29DC53AB66B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92037A95-F701-44D7-B191-29DC53AB66B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED2D3AE7-94F3-4E6B-9607-D1C14365706A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED2D3AE7-94F3-4E6B-9607-D1C14365706A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED2D3AE7-94F3-4E6B-9607-D1C14365706A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED2D3AE7-94F3-4E6B-9607-D1C14365706A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
