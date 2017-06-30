@@ -12,6 +12,11 @@ namespace paxa.Controllers
     {
         private PaxaDBController dao = new PaxaDBController(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
 
+        [HttpGet("checkStatus")]
+        public string status()
+        {
+            return "OK!";
+        }
         // GET paxa/allResources
         [HttpGet("allResources")]
         public IEnumerable<Resource> GetAllResources()
@@ -19,12 +24,11 @@ namespace paxa.Controllers
             return dao.ReadAllResources();
         }
 
+        // GET paxa/bookingsAtDate/{date}
         [HttpGet("bookingsAtDate/{date}")]
         public IEnumerable<Booking> BookingsAtDate(DateTime date)
         {
             return dao.ReadBookings(date);
         }
-
-
     }
 }
