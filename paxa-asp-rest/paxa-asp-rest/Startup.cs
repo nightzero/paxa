@@ -27,6 +27,16 @@ namespace paxa_asp_rest
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //CORS
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+
             // Add framework services.
             services.AddMvc();
         }
@@ -36,6 +46,9 @@ namespace paxa_asp_rest
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
 
+            app.UseCors("CorsPolicy");
+
+            // IMPORTANT: Make sure UseCors() is called BEFORE this
             app.UseMvc();
         }
     }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using paxa.Models;
 using System.Configuration;
+using Microsoft.AspNetCore.Cors;
 
 namespace paxa.Controllers
 {
@@ -17,6 +18,7 @@ namespace paxa.Controllers
         {
             return "OK!";
         }
+
         // GET paxa/allResources
         [HttpGet("allResources")]
         public IEnumerable<Resource> GetAllResources()
@@ -25,7 +27,7 @@ namespace paxa.Controllers
         }
 
         // GET paxa/bookingsAtDate/{date}
-        [HttpGet("bookingsAtDate/{date}")]
+        [HttpGet("bookingsAtDate")]
         public IEnumerable<Booking> BookingsAtDate(DateTime date)
         {
             return dao.ReadBookings(date);
