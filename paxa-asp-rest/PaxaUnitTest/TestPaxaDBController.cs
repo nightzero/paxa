@@ -23,5 +23,19 @@ namespace paxa.Test
             
             dao.CreateBooking(b, "112233");
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(ApplicationException))]
+        public void TestCreateBookingIfAlreadyExist()
+        {
+            TestCreateBooking();
+        }
+
+        [TestMethod]
+        public void TestDeleteBooking()
+        {
+            PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=root;Password=zodiac;Database=paxa");
+            dao.DeleteBooking(26, "112233");
+        }
     }
 }

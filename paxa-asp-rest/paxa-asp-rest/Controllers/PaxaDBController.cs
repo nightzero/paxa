@@ -17,6 +17,7 @@ namespace paxa.Controllers
         private String bookingsAtDateQuery = "SELECT b.*, r.name AS resource_name, u.name AS user_name, u.email FROM bookings b JOIN resources r on r.id = b.resource_id JOIN users u on u.id = b.user_id WHERE DATE(startTime) <= DATE(@sTime) AND DATE(endTime) >= DATE(@eTime)";
         private String bookingsExistQuery = "SELECT b.* FROM bookings b JOIN resources r on r.id = b.resource_id WHERE b.resource_id = @rId AND (startTime < @sTime) AND (endTime > @eTime)";
         private String createNewBookingQuery = "INSERT INTO bookings (resource_id, user_id, startTime, endTime) VALUES (@rId, @uId, @sTime, @eTime)";
+        private String deleteBookingQuery = "DELETE FROM bookings WHERE id = @bId";
 
         public string ConnectionString { get; set; }
 
@@ -193,7 +194,7 @@ namespace paxa.Controllers
             MySqlConnection con = GetConnection();
             try
             {
-                if(CheckIfBookingExist(booking.Resource.Id, booking.StartTime, booking.EndTime, con))
+                if (CheckIfBookingExist(booking.Resource.Id, booking.StartTime, booking.EndTime, con))
                 {
                     //Booking for the resource already exist in the specified time range. Raise error!
                     throw new ApplicationException("Resursen är redan bokad i angivet tidsintervall!");
@@ -223,7 +224,6 @@ namespace paxa.Controllers
         {
             List<Booking> bookings = new List<Booking>();
             MySqlCommand sqlCmd = null;
-            MySqlDataReader sdr = null;
             try
             {
                 sqlCmd = new MySqlCommand(createNewBookingQuery, con);
@@ -240,7 +240,51 @@ namespace paxa.Controllers
             }
             finally
             {
-                if (sdr != null) { sdr.Close(); sdr.Dispose(); }
+                if (sqlCmd != null) { sqlCmd.Dispose(); }
+            }
+        }
+
+        public void DeleteBooking(long bookingId, String profileId)
+        {
+            MySqlConnection con = GetConnection();
+
+            // TODO: Implement when authentication is in place.
+            //if (!CheckIfOwningBooking(bookingId, profileId, con))
+            //{
+            //    //User is trying to delete another users booking
+            //    throw new ApplicationException("Du kan bara ta bort dina egna bokningar!");
+            //}
+
+            try
+            {
+                DeleteBooking(bookingId, con);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                    con.Dispose();
+                }
+            }
+        }
+
+        private void DeleteBooking(long bookingId, MySqlConnection con)
+        {
+            MySqlCommand sqlCmd = null;
+            try
+            {
+                sqlCmd = new MySqlCommand(deleteBookingQuery, con);
+                sqlCmd.Prepare();
+                sqlCmd.Parameters.AddWithValue("@bId", bookingId);
+                sqlCmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Error occured in interaction towards DB: " + e.ToString());
+            }
+            finally
+            {
                 if (sqlCmd != null) { sqlCmd.Dispose(); }
             }
         }
