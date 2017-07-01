@@ -30,5 +30,11 @@ namespace paxa.Controllers
         {
             return dao.ReadBookings(date);
         }
+
+        // POST paxa/createNewBooking
+        [HttpPost("createNewBooking")]
+        public void createBooking([FromBody] Booking booking)
+        {
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using paxa.Models;
 using Microsoft.Extensions.Logging;
+using System.Numerics;
 
 namespace paxa.Controllers
 {
@@ -15,6 +16,7 @@ namespace paxa.Controllers
         private string allResourcesQuery = "SELECT id, name FROM resources";
         private String bookingsAtDateQuery = "SELECT b.*, r.name AS resource_name, u.name AS user_name, u.email FROM bookings b JOIN resources r on r.id = b.resource_id JOIN users u on u.id = b.user_id WHERE DATE(startTime) <= DATE(@sTime) AND DATE(endTime) >= DATE(@eTime)";
         private String bookingsExistQuery = "SELECT b.* FROM bookings b JOIN resources r on r.id = b.resource_id WHERE b.resource_id = @rId AND (startTime < @sTime) AND (endTime > @eTime)";
+        private String createNewBookingQuery = "INSERT INTO bookings (resource_id, user_id, startTime, endTime) VALUES (@rId, @uId, @sTime, @eTime)";
 
         public string ConnectionString { get; set; }
 
@@ -26,7 +28,9 @@ namespace paxa.Controllers
 
         private MySqlConnection GetConnection()
         {
-            return new MySqlConnection(ConnectionString);
+            MySqlConnection con = new MySqlConnection(ConnectionString);
+            con.Open();
+            return con;
         }
 
         public List<Resource> ReadAllResources()
@@ -54,7 +58,6 @@ namespace paxa.Controllers
             try
             {
                 sqlCmd = new MySqlCommand(allResourcesQuery, con);
-                con.Open();
                 sdr = sqlCmd.ExecuteReader();
                 while (sdr.Read())
                 {
@@ -72,7 +75,7 @@ namespace paxa.Controllers
             finally
             {
                 if (sdr != null) { sdr.Close(); sdr.Dispose(); }
-                if(sqlCmd != null) { sqlCmd.Dispose(); } 
+                if (sqlCmd != null) { sqlCmd.Dispose(); }
             }
 
             return resources;
@@ -102,7 +105,6 @@ namespace paxa.Controllers
             MySqlDataReader sdr = null;
             try
             {
-                con.Open();
                 sqlCmd = new MySqlCommand(bookingsAtDateQuery, con);
                 sqlCmd.Prepare();
                 sqlCmd.Parameters.AddWithValue("@sTime", date);
@@ -162,7 +164,6 @@ namespace paxa.Controllers
             MySqlDataReader sdr = null;
             try
             {
-                con.Open();
                 sqlCmd = new MySqlCommand(bookingsExistQuery, con);
                 sqlCmd.Prepare();
                 sqlCmd.Parameters.AddWithValue("@rId", resourceId);
@@ -185,6 +186,63 @@ namespace paxa.Controllers
             }
 
             return false;
+        }
+
+        public void CreateBooking(Booking booking, String profileId)
+        {
+            MySqlConnection con = GetConnection();
+            try
+            {
+                if(CheckIfBookingExist(booking.Resource.Id, booking.StartTime, booking.EndTime, con))
+                {
+                    //Booking for the resource already exist in the specified time range. Raise error!
+                    throw new ApplicationException("Resursen är redan bokad i angivet tidsintervall!");
+                }
+                //Is the user already in DB, else create it first and get the generated ID.
+                //TODO: Implement when authentication is ready
+                //Optional<User> user = getUser(connection, profileId);
+                //if(!user.isPresent())
+                //{
+                //    createUser(connection, profileId, booking.getUserName(), booking.getEmail());
+                //    user = getUser(connection, profileId);
+                //}
+                //CreateBooking(booking, user.get().getId(), con);
+                CreateBooking(booking, 12, con);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                    con.Dispose();
+                }
+            }
+        }
+
+        private void CreateBooking(Booking booking, BigInteger userId, MySqlConnection con)
+        {
+            List<Booking> bookings = new List<Booking>();
+            MySqlCommand sqlCmd = null;
+            MySqlDataReader sdr = null;
+            try
+            {
+                sqlCmd = new MySqlCommand(createNewBookingQuery, con);
+                sqlCmd.Prepare();
+                sqlCmd.Parameters.AddWithValue("@rId", booking.Resource.Id);
+                sqlCmd.Parameters.AddWithValue("@uId", userId);
+                sqlCmd.Parameters.AddWithValue("@sTime", booking.StartTime);
+                sqlCmd.Parameters.AddWithValue("@eTime", booking.EndTime);
+                sqlCmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Error occured in interaction towards DB: " + e.ToString());
+            }
+            finally
+            {
+                if (sdr != null) { sdr.Close(); sdr.Dispose(); }
+                if (sqlCmd != null) { sqlCmd.Dispose(); }
+            }
         }
     }
 }
