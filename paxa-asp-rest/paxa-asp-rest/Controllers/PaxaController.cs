@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using paxa.Models;
 using System.Configuration;
-using Microsoft.AspNetCore.Cors;
+using Newtonsoft.Json;
 
 namespace paxa.Controllers
 {
@@ -35,8 +35,16 @@ namespace paxa.Controllers
 
         // POST paxa/createNewBooking
         [HttpPost("createNewBooking")]
-        public void createBooking([FromBody] Booking booking)
+        [Produces("application/json")]
+        public string createBooking([FromBody] object request)
         {
+            var booking = JsonConvert.DeserializeObject<Booking>(request.ToString());
+            //TODO: Fix profileid when we have authentication in place.
+            dao.CreateBooking(booking, "112233");
+
+            // This return is needed to be backwards compatible with the old java backend.
+            // The ajax-call expect a valid json, due to dataType: "json"
+            return null;
         }
     }
 }
