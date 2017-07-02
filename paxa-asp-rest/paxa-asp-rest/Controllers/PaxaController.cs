@@ -46,5 +46,17 @@ namespace paxa.Controllers
             // The ajax-call expect a valid json, due to dataType: "json"
             return null;
         }
+
+        [HttpDelete("deleteBooking")]
+        [Produces("application/json")]
+        public string deleteBooking([FromBody] long bookingId)
+        {
+            //TODO: Fix profileid when we have authentication in place.
+            dao.DeleteBooking(bookingId, "112233");
+
+            // This return is needed to be backwards compatible with the old java backend.
+            // The ajax-call expect a valid json, due to dataType: "json"
+            return null;
+        }
     }
 }
