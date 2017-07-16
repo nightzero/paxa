@@ -203,7 +203,7 @@ namespace paxa.Controllers
                 }
                 //Is the user already in DB, else create it first and get the generated ID.
                 User user = getUser(con, profileId);
-                if(user != null)
+                if(user == null)
                 {
                     createUser(con, profileId, booking.UserName, booking.Email);
                     user = getUser(con, profileId);
@@ -259,9 +259,6 @@ namespace paxa.Controllers
 
                 while (sdr.Read())
                 {
-                    int resId = Convert.ToInt32(sdr["resource_id"]);
-                    String resName = sdr["resource_name"].ToString();
-
                     Int64 id = Convert.ToInt64(sdr["id"]);
                     String profileId = sdr["profileid"].ToString();
                     String name = sdr["name"].ToString();
@@ -276,7 +273,7 @@ namespace paxa.Controllers
             finally
             {
                 if (sqlCmd != null) { sqlCmd.Dispose(); }
-                if (sqlCmd != null) { sqlCmd.Dispose(); }
+                if (sdr != null) { sdr.Close(); sdr.Dispose(); }
             }
             return resp;
         }
