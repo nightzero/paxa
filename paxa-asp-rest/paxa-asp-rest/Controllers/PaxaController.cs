@@ -5,6 +5,7 @@ using System.Linq;
 using paxa.Models;
 using System.Configuration;
 using Newtonsoft.Json;
+using paxa.Utilities;
 
 namespace paxa.Controllers
 {
@@ -36,11 +37,18 @@ namespace paxa.Controllers
         // POST paxa/createNewBooking
         [HttpPost("createNewBooking")]
         [Produces("application/json")]
+        [AuthenticationFilter]
         public string createBooking([FromBody] object request)
         {
             var booking = JsonConvert.DeserializeObject<Booking>(request.ToString());
-            //TODO: Fix profileid when we have authentication in place.
-            dao.CreateBooking(booking, "112233");
+            string profileId = ViewBag.ProfileId;
+            String profileName = ViewBag.ProfileName;
+            String profileEmail = ViewBag.ProfileEmail;
+
+            booking.UserName = profileName;
+            booking.Email = profileEmail;
+
+            dao.CreateBooking(booking, profileId);
 
             // This return is needed to be backwards compatible with the old java backend.
             // The ajax-call expect a valid json, due to dataType: "json"

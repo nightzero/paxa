@@ -18,6 +18,8 @@ namespace paxa.Controllers
         private String bookingsExistQuery = "SELECT b.* FROM bookings b JOIN resources r on r.id = b.resource_id WHERE b.resource_id = @rId AND (startTime < @sTime) AND (endTime > @eTime)";
         private String createNewBookingQuery = "INSERT INTO bookings (resource_id, user_id, startTime, endTime) VALUES (@rId, @uId, @sTime, @eTime)";
         private String deleteBookingQuery = "DELETE FROM bookings WHERE id = @bId";
+        private String lookUpUser = "SELECT id, profileid, name, email FROM users WHERE profileid = @pId";
+        private String createNewUser = "INSERT INTO users (profileid, name, email) VALUES (@pId, @name, @email)";
 
         public string ConnectionString { get; set; }
 
@@ -200,15 +202,13 @@ namespace paxa.Controllers
                     throw new ApplicationException("Resursen är redan bokad i angivet tidsintervall!");
                 }
                 //Is the user already in DB, else create it first and get the generated ID.
-                //TODO: Implement when authentication is ready
-                //Optional<User> user = getUser(connection, profileId);
-                //if(!user.isPresent())
-                //{
-                //    createUser(connection, profileId, booking.getUserName(), booking.getEmail());
-                //    user = getUser(connection, profileId);
-                //}
-                //CreateBooking(booking, user.get().getId(), con);
-                CreateBooking(booking, 12, con);
+                User user = getUser(con, profileId);
+                if(user != null)
+                {
+                    createUser(con, profileId, booking.UserName, booking.Email);
+                    user = getUser(con, profileId);
+                }
+                CreateBooking(booking, user.Id, con);
             }
             finally
             {
@@ -232,6 +232,65 @@ namespace paxa.Controllers
                 sqlCmd.Parameters.AddWithValue("@uId", userId);
                 sqlCmd.Parameters.AddWithValue("@sTime", booking.StartTime);
                 sqlCmd.Parameters.AddWithValue("@eTime", booking.EndTime);
+                sqlCmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Error occured in interaction towards DB: " + e.ToString());
+            }
+            finally
+            {
+                if (sqlCmd != null) { sqlCmd.Dispose(); }
+            }
+        }
+
+        User getUser(MySqlConnection con, String profileID)
+        {
+            MySqlCommand sqlCmd = null;
+            MySqlDataReader sdr = null;
+            User resp = null;
+
+            try
+            {
+                sqlCmd = new MySqlCommand(lookUpUser, con);
+                sqlCmd.Prepare();
+                sqlCmd.Parameters.AddWithValue("@pId", profileID);
+                sdr = sqlCmd.ExecuteReader();
+
+                while (sdr.Read())
+                {
+                    int resId = Convert.ToInt32(sdr["resource_id"]);
+                    String resName = sdr["resource_name"].ToString();
+
+                    Int64 id = Convert.ToInt64(sdr["id"]);
+                    String profileId = sdr["profileid"].ToString();
+                    String name = sdr["name"].ToString();
+                    String email = sdr["email"].ToString();
+                    resp = new User(id, profileId, name, email);
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Error occured in interaction towards DB: " + e.ToString());
+            }
+            finally
+            {
+                if (sqlCmd != null) { sqlCmd.Dispose(); }
+                if (sqlCmd != null) { sqlCmd.Dispose(); }
+            }
+            return resp;
+        }
+
+        void createUser(MySqlConnection con, String profileId, String name, String email)
+        {
+            MySqlCommand sqlCmd = null;
+            try
+            {
+                sqlCmd = new MySqlCommand(createNewUser, con);
+                sqlCmd.Prepare();
+                sqlCmd.Parameters.AddWithValue("@pId", profileId);
+                sqlCmd.Parameters.AddWithValue("@name", name);
+                sqlCmd.Parameters.AddWithValue("@email", email);
                 sqlCmd.ExecuteNonQuery();
             }
             catch (Exception e)
