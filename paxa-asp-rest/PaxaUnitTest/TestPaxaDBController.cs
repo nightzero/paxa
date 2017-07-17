@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using paxa.Controllers;
 using paxa.Models;
+using MySql.Data.MySqlClient;
 
 namespace paxa.Test
 {
@@ -20,7 +21,7 @@ namespace paxa.Test
             b.Resource = r;
             b.StartTime = new DateTime(2099, 1, 1, 12, 0, 0);
             b.EndTime = new DateTime(2099, 1, 1, 19, 0, 0);
-            
+
             dao.CreateBooking(b, "112233");
         }
 
@@ -36,6 +37,41 @@ namespace paxa.Test
         {
             PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=root;Password=zodiac;Database=paxa");
             dao.DeleteBooking(26, "112233");
+        }
+
+        [TestMethod]
+        public void TestCreateUser()
+        {
+            MySqlConnection con = null;
+            try
+            {
+                PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=root;Password=zodiac;Database=paxa");
+                con = new MySqlConnection("Server=localhost;User Id=root;Password=zodiac;Database=paxa");
+                con.Open();
+                dao.createUser(con, "666", "Beast", "beast@hell.com");
+            }
+            finally
+            {
+                if (con != null) { con.Close(); }
+            }
+        }
+
+        [TestMethod]
+        public void testGetUser()
+        {
+            MySqlConnection con = null;
+            try
+            {
+                PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=root;Password=zodiac;Database=paxa");
+                con = new MySqlConnection("Server=localhost;User Id=root;Password=zodiac;Database=paxa");
+                con.Open();
+                User u = dao.getUser(con, "666");
+                Assert.AreEqual(u.Name, "Beast");
+            }
+            finally
+            {
+                if (con != null) { con.Close(); }
+            }
         }
     }
 }

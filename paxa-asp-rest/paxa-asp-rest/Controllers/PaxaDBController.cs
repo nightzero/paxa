@@ -244,7 +244,7 @@ namespace paxa.Controllers
             }
         }
 
-        User getUser(MySqlConnection con, String profileID)
+        public User getUser(MySqlConnection con, String profileID)
         {
             MySqlCommand sqlCmd = null;
             MySqlDataReader sdr = null;
@@ -278,7 +278,7 @@ namespace paxa.Controllers
             return resp;
         }
 
-        void createUser(MySqlConnection con, String profileId, String name, String email)
+        public void createUser(MySqlConnection con, String profileId, String name, String email)
         {
             MySqlCommand sqlCmd = null;
             try
