@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using paxa.Models;
 using Microsoft.Extensions.Logging;
 using System.Numerics;
+using System.Net.Http;
+using System.Net;
+using System.Web.Http;
 
 namespace paxa.Controllers
 {
@@ -18,6 +21,7 @@ namespace paxa.Controllers
         private String bookingsExistQuery = "SELECT b.* FROM bookings b JOIN resources r on r.id = b.resource_id WHERE b.resource_id = @rId AND (startTime < @sTime) AND (endTime > @eTime)";
         private String createNewBookingQuery = "INSERT INTO bookings (resource_id, user_id, startTime, endTime) VALUES (@rId, @uId, @sTime, @eTime)";
         private String deleteBookingQuery = "DELETE FROM bookings WHERE id = @bId";
+        private String bookingOnProfileIdQuery = "SELECT b.id, u.profileid FROM bookings b JOIN users u on u.id = b.user_id WHERE b.id = @bId AND u.profileid = @pId";
         private String lookUpUser = "SELECT id, profileid, name, email FROM users WHERE profileid = @pId";
         private String createNewUser = "INSERT INTO users (profileid, name, email) VALUES (@pId, @name, @email)";
 
@@ -304,12 +308,16 @@ namespace paxa.Controllers
         {
             MySqlConnection con = GetConnection();
 
-            // TODO: Implement when authentication is in place.
-            //if (!CheckIfOwningBooking(bookingId, profileId, con))
-            //{
-            //    //User is trying to delete another users booking
-            //    throw new ApplicationException("Du kan bara ta bort dina egna bokningar!");
-            //}
+            if (!CheckIfOwningBooking(bookingId, profileId, con))
+            {
+                //User is trying to delete another users booking
+                var resp = new HttpResponseMessage(HttpStatusCode.Forbidden)
+                {
+                    Content = new StringContent("Du kan bara ta bort dina egna bokningar!"),
+                    ReasonPhrase = "Kunde inte ta bort bokning"
+                };
+                throw new HttpResponseException(resp);
+            }
 
             try
             {
@@ -323,6 +331,37 @@ namespace paxa.Controllers
                     con.Dispose();
                 }
             }
+        }
+
+        bool CheckIfOwningBooking(long bookingId, String profileId, MySqlConnection con)
+        {
+            List<Booking> bookings = new List<Booking>();
+            MySqlCommand sqlCmd = null;
+            MySqlDataReader sdr = null;
+
+            try
+            {
+                sqlCmd = new MySqlCommand(bookingOnProfileIdQuery, con);
+                sqlCmd.Prepare();
+                sqlCmd.Parameters.AddWithValue("@bId", bookingId);
+                sqlCmd.Parameters.AddWithValue("@pId", profileId);
+                sdr = sqlCmd.ExecuteReader();
+
+                if(sdr.HasRows)
+                {
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Error occured in interaction towards DB: " + e.ToString());
+            }
+            finally
+            {
+                if (sqlCmd != null) { sqlCmd.Dispose(); }
+                if (sdr != null) { sdr.Close(); sdr.Dispose(); }
+            }
+            return false;
         }
 
         private void DeleteBooking(long bookingId, MySqlConnection con)

@@ -57,10 +57,11 @@ namespace paxa.Controllers
 
         [HttpDelete("deleteBooking")]
         [Produces("application/json")]
+        [AuthenticationFilter]
         public string deleteBooking([FromBody] long bookingId)
         {
-            //TODO: Fix profileid when we have authentication in place.
-            dao.DeleteBooking(bookingId, "112233");
+            string profileId = ViewBag.ProfileId;
+            dao.DeleteBooking(bookingId, profileId);
 
             // This return is needed to be backwards compatible with the old java backend.
             // The ajax-call expect a valid json, due to dataType: "json"
