@@ -202,7 +202,12 @@ namespace paxa.Controllers
                 if (CheckIfBookingExist(booking.Resource.Id, booking.StartTime, booking.EndTime, con))
                 {
                     //Booking for the resource already exist in the specified time range. Raise error!
-                    throw new ApplicationException("Resursen är redan bokad i angivet tidsintervall!");
+                    var resp = new HttpResponseMessage(HttpStatusCode.Forbidden)
+                    {
+                        Content = new StringContent("Resursen är redan bokad i angivet tidsintervall!"),
+                        ReasonPhrase = "Resurs redan bokad"
+                    };
+                    throw new HttpResponseException(resp);
                 }
                 //Is the user already in DB, else create it first and get the generated ID.
                 User user = getUser(con, profileId);
@@ -309,8 +314,6 @@ namespace paxa.Controllers
 
             if (!CheckIfOwningBooking(bookingId, profileId, con))
             {
-                //User is trying to delete another users booking
-                //throw new ApplicationException("Du kan bara ta bort dina egna bokningar!");
                 var resp = new HttpResponseMessage(HttpStatusCode.Forbidden)
                 {
                     Content = new StringContent("Du kan bara ta bort dina egna bokningar!"),
