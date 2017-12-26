@@ -1,4 +1,4 @@
--- --------------------------------------------------------
+﻿-- --------------------------------------------------------
 -- Värd:                         127.0.0.1
 -- Server version:               5.7.17-log - MySQL Community Server (GPL)
 -- Server OS:                    Win64
@@ -46,12 +46,13 @@ CREATE TABLE IF NOT EXISTS `resources` (
 INSERT IGNORE INTO `resources` (`id`, `name`) VALUES
 	(1, 'Brum-Brum'),
 	(2, 'Svarten'),
-	(3, 'Oxybox'),
+	(3, 'Oxybox kvadratisk'),
 	(4, 'Regulatorpaket1'),
 	(5, 'Regulatorpaket2'),
 	(6, 'Regulatorpaket3'),
 	(7, 'Regulatorpaket4'),
-	(8, 'Regulatorpaket5');
+	(8, 'Regulatorpaket5'),
+	(9, 'Oxybox cylinder');
 /*!40000 ALTER TABLE `resources` ENABLE KEYS */;
 
 -- Dumping structure for tabell paxa.users
