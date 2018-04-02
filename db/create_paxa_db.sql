@@ -52,7 +52,17 @@ INSERT IGNORE INTO `resources` (`id`, `name`) VALUES
 	(6, 'Regulatorpaket3'),
 	(7, 'Regulatorpaket4'),
 	(8, 'Regulatorpaket5'),
-	(9, 'Oxybox cylinder');
+	(9, 'Oxybox cylinder'),
+	(10, 'Väst 1 Balance(L)'),
+	(11, 'Väst 2 Balance(L)'),
+	(12, 'Väst 3 Balance(XL)'),
+	(13, 'Väst 4 Balance(XL)'),
+	(14, 'Väst 5 Balance(XL)'),
+	(15, 'Väst 6 Scubapro(XS)'),
+	(16, 'Väst 7 Scubapro(XS)'),
+	(17, 'Väst 8 Scubapro(ML)'),
+	(18, 'Väst 9 Scubapro(ML)'),
+	(19, 'Väst 10 Poseidon (M)');
 /*!40000 ALTER TABLE `resources` ENABLE KEYS */;
 
 -- Dumping structure for tabell paxa.users
