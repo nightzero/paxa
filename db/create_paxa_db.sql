@@ -62,7 +62,9 @@ INSERT IGNORE INTO `resources` (`id`, `name`) VALUES
 	(16, 'Väst 7 Scubapro(XS)'),
 	(17, 'Väst 8 Scubapro(ML)'),
 	(18, 'Väst 9 Scubapro(ML)'),
-	(19, 'Väst 10 Poseidon (M)');
+	(19, 'Väst 10 Poseidon (M)'),
+	(20, 'Moby Dick');
+
 /*!40000 ALTER TABLE `resources` ENABLE KEYS */;
 
 -- Dumping structure for tabell paxa.users
