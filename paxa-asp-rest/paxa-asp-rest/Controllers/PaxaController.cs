@@ -42,7 +42,8 @@ namespace paxa.Controllers
         // POST paxa/createNewBooking
         [HttpPost]
         [Route("createNewBooking")]
-        [AuthenticationFilter]
+        //[AuthenticationFilter]
+        [DummyFilter]
         public string createBooking([FromBody] object request)
         {
             var booking = JsonConvert.DeserializeObject<Booking>(request.ToString());
@@ -66,7 +67,8 @@ namespace paxa.Controllers
 
         [HttpDelete]
         [Route("deleteBooking")]
-        [AuthenticationFilter]
+        //[AuthenticationFilter]
+        [DummyFilter]
         public string deleteBooking([FromBody] long bookingId)
         {
             object profileId = null;

@@ -13,7 +13,7 @@ namespace paxa.Tests
         [TestMethod]
         public void TestCreateBooking()
         {
-            PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=root;Password=zodiac;Database=paxa");
+            PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=paxa;Password=paxa;Database=paxa");
             Resource r = new Resource();
             r.Id = 5;
             Booking b = new Booking();
@@ -34,7 +34,7 @@ namespace paxa.Tests
         [TestMethod]
         public void TestDeleteBooking()
         {
-            PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=root;Password=zodiac;Database=paxa");
+            PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=paxa;Password=paxa;Database=paxa");
             dao.DeleteBooking(26, "112233");
         }
 
@@ -44,7 +44,7 @@ namespace paxa.Tests
             MySqlConnection con = null;
             try
             {
-                PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=root;Password=zodiac;Database=paxa");
+                PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=paxa;Password=paxa;Database=paxa");
                 con = new MySqlConnection("Server=localhost;User Id=root;Password=zodiac;Database=paxa");
                 con.Open();
                 dao.createUser(con, "666", "Beast", "beast@hell.com");
@@ -61,7 +61,7 @@ namespace paxa.Tests
             MySqlConnection con = null;
             try
             {
-                PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=root;Password=zodiac;Database=paxa");
+                PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=paxa;Password=paxa;Database=paxa");
                 con = new MySqlConnection("Server=localhost;User Id=root;Password=zodiac;Database=paxa");
                 con.Open();
                 User u = dao.getUser(con, "666");

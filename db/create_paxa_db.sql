@@ -63,7 +63,7 @@ INSERT IGNORE INTO `resources` (`id`, `name`) VALUES
 	(17, 'Väst 8 Scubapro(ML)'),
 	(18, 'Väst 9 Scubapro(ML)'),
 	(19, 'Väst 10 Poseidon (M)'),
-	(20, 'Moby Dick')
+	(20, 'Moby Dick'),
 	(21, 'Flaska 1 (10x300)'),
 	(22, 'Flaska 2 (10x300)'),
 	(23, 'Flaska 3 (10x300)'),
