@@ -49,6 +49,10 @@
         <input id="toTime" type="text" class="time" style="vertical-align: top" />
         <br />
         <br />
+        <label for="agreementChk">Jag godkänner hyresavtalet </label>
+        <input type="checkbox" name="agreementChk" id="agreementChk" unchecked />
+        <br />
+        <br />
         <button id="cancel_book_btn" class="ui-button ui-widget ui-corner-all">Avbryt</button>
         <button id="book_btn" class="ui-button ui-widget ui-corner-all"><strong>Boka</strong></button>
       </div>
@@ -215,10 +219,20 @@
       'timeFormat': 'H:i'
     });
 
+    $('#agreementChk').click(function () {
+        if ($(this).is(':checked')) {
+            $('#book_btn').button("option", "disabled", false);
+        } else {
+            $('#book_btn').button("option", "disabled", true);
+        }
+    });
+
+
     function resetBookingFields() {
       $('#resource_select').prop('selectedIndex',0);
       $('#fromTime').timepicker('setTime', defaultStartTime);
       $('#toTime').timepicker('setTime', defaultStartTime);
+      $('#book_btn').button({disabled: true});
     }
 
     function loadExistingBookings(date) {
