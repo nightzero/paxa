@@ -13,7 +13,6 @@ namespace paxa.Tests
         [TestMethod]
         public void TestCreateBooking()
         {
-            PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=paxa;Password=paxa;Database=paxa");
             Resource r = new Resource();
             r.Id = 5;
             Booking b = new Booking();
@@ -21,6 +20,7 @@ namespace paxa.Tests
             b.StartTime = new DateTime(2099, 1, 1, 12, 0, 0);
             b.EndTime = new DateTime(2099, 1, 1, 19, 0, 0);
 
+            PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=paxa;Password=paxa;Database=paxa");
             dao.CreateBooking(b, "112233");
         }
 
@@ -56,7 +56,7 @@ namespace paxa.Tests
         }
 
         [TestMethod]
-        public void testGetUser()
+        public void TestGetUser()
         {
             MySqlConnection con = null;
             try
