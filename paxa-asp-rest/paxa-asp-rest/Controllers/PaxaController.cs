@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using paxa.Models;
 using System.Configuration;
 using Newtonsoft.Json;
@@ -74,7 +73,7 @@ namespace paxa.Controllers
             object profileId = null;
             this.Request.Properties.TryGetValue("ProfileId", out profileId);
 
-            dao.DeleteBooking(bookingId, (string)profileId);
+            dao.deleteBooking(bookingId, (string)profileId);
 
             // This return is needed to be backwards compatible with the old java backend.
             // The ajax-call expect a valid json, due to dataType: "json"

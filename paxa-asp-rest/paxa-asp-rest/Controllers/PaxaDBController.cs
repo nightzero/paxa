@@ -112,9 +112,9 @@ namespace paxa.Controllers
             try
             {
                 sqlCmd = new MySqlCommand(bookingsAtDateQuery, con);
-                sqlCmd.Prepare();
                 sqlCmd.Parameters.AddWithValue("@sTime", date);
                 sqlCmd.Parameters.AddWithValue("@eTime", date);
+                sqlCmd.Prepare();
                 sdr = sqlCmd.ExecuteReader();
                 while (sdr.Read())
                 {
@@ -171,10 +171,10 @@ namespace paxa.Controllers
             try
             {
                 sqlCmd = new MySqlCommand(bookingsExistQuery, con);
-                sqlCmd.Prepare();
                 sqlCmd.Parameters.AddWithValue("@rId", resourceId);
                 sqlCmd.Parameters.AddWithValue("@sTime", endTime);
                 sqlCmd.Parameters.AddWithValue("@eTime", startTime);
+                sqlCmd.Prepare();
                 sdr = sqlCmd.ExecuteReader();
                 if (sdr.HasRows)
                 {
@@ -235,11 +235,11 @@ namespace paxa.Controllers
             try
             {
                 sqlCmd = new MySqlCommand(createNewBookingQuery, con);
-                sqlCmd.Prepare();
                 sqlCmd.Parameters.AddWithValue("@rId", booking.Resource.Id);
                 sqlCmd.Parameters.AddWithValue("@uId", userId);
                 sqlCmd.Parameters.AddWithValue("@sTime", booking.StartTime);
                 sqlCmd.Parameters.AddWithValue("@eTime", booking.EndTime);
+                sqlCmd.Prepare();
                 sqlCmd.ExecuteNonQuery();
             }
             catch (Exception e)
@@ -261,8 +261,8 @@ namespace paxa.Controllers
             try
             {
                 sqlCmd = new MySqlCommand(lookUpUser, con);
-                sqlCmd.Prepare();
                 sqlCmd.Parameters.AddWithValue("@pId", profileID);
+                sqlCmd.Prepare();
                 sdr = sqlCmd.ExecuteReader();
 
                 while (sdr.Read())
@@ -292,10 +292,10 @@ namespace paxa.Controllers
             try
             {
                 sqlCmd = new MySqlCommand(createNewUser, con);
-                sqlCmd.Prepare();
                 sqlCmd.Parameters.AddWithValue("@pId", profileId);
                 sqlCmd.Parameters.AddWithValue("@name", name);
                 sqlCmd.Parameters.AddWithValue("@email", email);
+                sqlCmd.Prepare();
                 sqlCmd.ExecuteNonQuery();
             }
             catch (Exception e)
@@ -308,7 +308,7 @@ namespace paxa.Controllers
             }
         }
 
-        public void DeleteBooking(long bookingId, String profileId)
+        public void deleteBooking(long bookingId, String profileId)
         {
             MySqlConnection con = GetConnection();
 
@@ -345,9 +345,9 @@ namespace paxa.Controllers
             try
             {
                 sqlCmd = new MySqlCommand(bookingOnProfileIdQuery, con);
-                sqlCmd.Prepare();
                 sqlCmd.Parameters.AddWithValue("@bId", bookingId);
                 sqlCmd.Parameters.AddWithValue("@pId", profileId);
+                sqlCmd.Prepare();
                 sdr = sqlCmd.ExecuteReader();
 
                 if(sdr.HasRows)
@@ -373,8 +373,8 @@ namespace paxa.Controllers
             try
             {
                 sqlCmd = new MySqlCommand(deleteBookingQuery, con);
-                sqlCmd.Prepare();
                 sqlCmd.Parameters.AddWithValue("@bId", bookingId);
+                sqlCmd.Prepare();
                 sqlCmd.ExecuteNonQuery();
             }
             catch (Exception e)

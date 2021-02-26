@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using paxa.Controllers;
 using paxa.Models;
 using MySql.Data.MySqlClient;
-
+using System.Web.Http;
 
 namespace paxa.Tests
 {
@@ -19,13 +19,15 @@ namespace paxa.Tests
             b.Resource = r;
             b.StartTime = new DateTime(2099, 1, 1, 12, 0, 0);
             b.EndTime = new DateTime(2099, 1, 1, 19, 0, 0);
+            b.UserName = "kalle";
+            b.Email = "kalle@sverige.se";
 
             PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=paxa;Password=paxa;Database=paxa");
             dao.CreateBooking(b, "112233");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ApplicationException))]
+        [ExpectedException(typeof(HttpResponseException))]
         public void TestCreateBookingIfAlreadyExist()
         {
             TestCreateBooking();
@@ -35,7 +37,7 @@ namespace paxa.Tests
         public void TestDeleteBooking()
         {
             PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=paxa;Password=paxa;Database=paxa");
-            dao.DeleteBooking(26, "112233");
+            dao.deleteBooking(34, "112233");
         }
 
         [TestMethod]
@@ -45,7 +47,7 @@ namespace paxa.Tests
             try
             {
                 PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=paxa;Password=paxa;Database=paxa");
-                con = new MySqlConnection("Server=localhost;User Id=root;Password=zodiac;Database=paxa");
+                con = new MySqlConnection("Server=localhost;User Id=paxa;Password=paxa;Database=paxa");
                 con.Open();
                 dao.createUser(con, "666", "Beast", "beast@hell.com");
             }
@@ -62,7 +64,7 @@ namespace paxa.Tests
             try
             {
                 PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=paxa;Password=paxa;Database=paxa");
-                con = new MySqlConnection("Server=localhost;User Id=root;Password=zodiac;Database=paxa");
+                con = new MySqlConnection("Server=localhost;User Id=paxa;Password=paxa;Database=paxa");
                 con.Open();
                 User u = dao.getUser(con, "666");
                 Assert.AreEqual(u.Name, "Beast");

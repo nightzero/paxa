@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,26 +11,19 @@ namespace paxa.Utilities
     {
         private static ILoggerFactory _Factory = null;
 
-        public static void ConfigureLogger(ILoggerFactory factory)
-        {
-            factory.AddConsole(LogLevel.Debug);
-            factory.AddDebug(LogLevel.Debug);
-        }
-
-        public static ILoggerFactory LoggerFactory
+        public static ILoggerFactory LoggerFactoryCreator
         {
             get
             {
                 if (_Factory == null)
                 {
-                    _Factory = new LoggerFactory();
-                    ConfigureLogger(_Factory);
+                    _Factory = LoggerFactory.Create(builder => builder.AddConsole());
                 }
                 return _Factory;
             }
             set { _Factory = value; }
         }
 
-        public static ILogger CreateLogger() => LoggerFactory.CreateLogger("Debug");
+        public static ILogger CreateLogger() => LoggerFactoryCreator.CreateLogger("Debug");
     }
 }
