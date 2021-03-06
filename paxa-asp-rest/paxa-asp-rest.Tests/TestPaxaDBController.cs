@@ -13,17 +13,29 @@ namespace paxa.Tests
         [TestMethod]
         public void TestCreateBooking()
         {
-            Resource r = new Resource();
-            r.Id = 5;
-            Booking b = new Booking();
-            b.Resource = r;
-            b.StartTime = new DateTime(2099, 1, 1, 12, 0, 0);
-            b.EndTime = new DateTime(2099, 1, 1, 19, 0, 0);
-            b.UserName = "kalle";
-            b.Email = "kalle@sverige.se";
-
             PaxaDBController dao = new PaxaDBController("Server=localhost;User Id=paxa;Password=paxa;Database=paxa");
-            dao.CreateBooking(b, "112233");
+            Tuple<long, long> resp = null;
+            try
+            {
+                Resource r = new Resource();
+                r.Id = 5;
+                Booking b = new Booking();
+                b.Resource = r;
+                b.StartTime = new DateTime(2099, 1, 1, 12, 0, 0);
+                b.EndTime = new DateTime(2099, 1, 1, 19, 0, 0);
+                b.UserName = "kalle";
+                b.Email = "kalle@sverige.se";
+
+                resp = dao.CreateBooking(b, "112233");
+            }
+            finally
+            {
+                if(resp != null)
+                {
+                    dao.deleteBooking(resp.Item1, "112233");
+                    dao.deleteUser(resp.Item2);
+                }
+            }
         }
 
         [TestMethod]

@@ -271,6 +271,7 @@
     <Compile Include="Models\Resource.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\ConnectionManager.cs" />
     <Compile Include="Utilities\DummyFilter.cs" />
   </ItemGroup>
   <ItemGroup>
