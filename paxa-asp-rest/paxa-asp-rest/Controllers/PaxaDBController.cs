@@ -19,6 +19,7 @@ namespace paxa.Controllers
         private string allResourcesQuery = "SELECT id, name FROM resources";
         private String bookingsAtDateQuery = "SELECT b.*, r.name AS resource_name, u.name AS user_name, u.email FROM bookings b JOIN resources r on r.id = b.resource_id JOIN users u on u.id = b.user_id WHERE DATE(startTime) <= DATE(@sTime) AND DATE(endTime) >= DATE(@eTime)";
         private String bookingsExistQuery = "SELECT b.* FROM bookings b JOIN resources r on r.id = b.resource_id WHERE b.resource_id = @rId AND (startTime < @sTime) AND (endTime > @eTime)";
+        private String bookingIdExistQuery = "SELECT b.* FROM bookings b Where b.id = @bId";
         private String createNewBookingQuery = "INSERT INTO bookings (resource_id, user_id, startTime, endTime) VALUES (@rId, @uId, @sTime, @eTime)";
         private String deleteBookingQuery = "DELETE FROM bookings WHERE id = @bId";
         private String bookingOnProfileIdQuery = "SELECT b.id, u.profileid FROM bookings b JOIN users u on u.id = b.user_id WHERE b.id = @bId AND u.profileid = @pId";
@@ -177,6 +178,35 @@ namespace paxa.Controllers
             return false;
         }
 
+        private bool CheckIfBookingIdExist(long bookingId, MySqlConnection con)
+        {
+            List<Booking> bookings = new List<Booking>();
+            MySqlCommand sqlCmd = null;
+            MySqlDataReader sdr = null;
+            try
+            {
+                sqlCmd = new MySqlCommand(bookingIdExistQuery, con);
+                sqlCmd.Parameters.AddWithValue("@bId", bookingId);
+                sqlCmd.Prepare();
+                sdr = sqlCmd.ExecuteReader();
+                if (sdr.HasRows)
+                {
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Error occured in interaction towards DB: " + e.ToString());
+            }
+            finally
+            {
+                if (sdr != null) { sdr.Close(); sdr.Dispose(); }
+                if (sqlCmd != null) { sqlCmd.Dispose(); }
+            }
+
+            return false;
+        }
+
         public Tuple<long, long> CreateBooking(Booking booking, String profileId)
         {
             MySqlConnection con = connectionManager.GetConnection();
@@ -196,11 +226,11 @@ namespace paxa.Controllers
                     throw new HttpResponseException(resp);
                 }
                 //Is the user already in DB, else create it first and get the generated ID.
-                User user = getUser(con, profileId);
+                User user = getUser(profileId);
                 if(user == null)
                 {
-                    createUser(con, profileId, booking.UserName, booking.Email);
-                    user = getUser(con, profileId);
+                    createUser(profileId, booking.UserName, booking.Email);
+                    user = getUser(profileId);
                     userId = user.Id;
                 }
                 bookingId = CreateBooking(booking, user.Id, con);
@@ -240,8 +270,9 @@ namespace paxa.Controllers
             return createdId;
         }
 
-        public User getUser(MySqlConnection con, String profileID)
+        public User getUser(String profileID)
         {
+            MySqlConnection con = connectionManager.GetConnection();
             MySqlCommand sqlCmd = null;
             MySqlDataReader sdr = null;
             User resp = null;
@@ -270,12 +301,14 @@ namespace paxa.Controllers
             {
                 if (sqlCmd != null) { sqlCmd.Dispose(); }
                 if (sdr != null) { sdr.Close(); sdr.Dispose(); }
+                connectionManager.CloseConnection(con);
             }
             return resp;
         }
 
-        public void createUser(MySqlConnection con, String profileId, String name, String email)
+        public void createUser(String profileId, String name, String email)
         {
+            MySqlConnection con = connectionManager.GetConnection();
             MySqlCommand sqlCmd = null;
             try
             {
@@ -292,7 +325,7 @@ namespace paxa.Controllers
             }
             finally
             {
-                if (sqlCmd != null) { sqlCmd.Dispose(); }
+                connectionManager.CloseConnection(con);
             }
         }
 
@@ -320,23 +353,26 @@ namespace paxa.Controllers
         {
             MySqlConnection con = connectionManager.GetConnection();
 
-            if (!CheckIfOwningBooking(bookingId, profileId, con))
+            if (CheckIfBookingIdExist(bookingId, con))
             {
-                var resp = new HttpResponseMessage(HttpStatusCode.Forbidden)
+                if (!CheckIfOwningBooking(bookingId, profileId, con))
                 {
-                    Content = new StringContent("Du kan bara ta bort dina egna bokningar!"),
-                    ReasonPhrase = "Kunde inte ta bort bokning"
-                };
-                throw new HttpResponseException(resp);
-            }
+                    var resp = new HttpResponseMessage(HttpStatusCode.Forbidden)
+                    {
+                        Content = new StringContent("Du kan bara ta bort dina egna bokningar!"),
+                        ReasonPhrase = "Kunde inte ta bort bokning"
+                    };
+                    throw new HttpResponseException(resp);
+                }
 
-            try
-            {
-                DeleteBooking(bookingId, con);
-            }
-            finally
-            {
-                connectionManager.CloseConnection(con);
+                try
+                {
+                    DeleteBooking(bookingId, con);
+                }
+                finally
+                {
+                    connectionManager.CloseConnection(con);
+                }
             }
         }
 
