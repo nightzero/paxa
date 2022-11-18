@@ -12,8 +12,7 @@
     <link rel="stylesheet" href="timepicker/jquery.timepicker.css">
     <script src="timepicker/jquery.timepicker.min.js"></script>
 
-    <script src="https://apis.google.com/js/platform.js"></script>
-    <meta name="google-signin-client_id" content="208762726005-snfujhcqdcu40gkla949jlakd1pphmpk.apps.googleusercontent.com">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
   </head>
   <body>
   <div id="wrap">
@@ -24,8 +23,25 @@
         <h1>SSDK bokning</h1>
       </div>
 
-      <div id="login_btn" class="g-signin2"></div>
-      <div id="logout_btn" style="display:none"><a href="#" onclick="signOut();">Logga ut</a></div>
+      <div id="g_id_onload"
+           data-client_id="208762726005-snfujhcqdcu40gkla949jlakd1pphmpk.apps.googleusercontent.com"
+           data-context="signin"
+           data-ux_mode="popup"
+           data-callback="onLoginSuccess"
+           data-auto_select="true"
+           data-skip_prompt_cookie="paxa_login_state">
+      </div>
+      <div id="login_btn" 
+          class="g_id_signin"
+          data-type="standard"
+          data-shape="rectangular"
+          data-theme="outline"
+          data-text="signin_with"
+          data-size="large"
+          data-logo_alignment="left">
+      </div>
+      <div id="loggedin_lbl">Inloggad</div>
+      <div id="logout_btn" class="g_id_signout" style="display:none"><a href="#" onclick="signOut();">Logga ut</a></div>
 
       <div class="middle" id="booking_list">
         <label for="date" style="display: block">Visar bokningar för datum: </label>
@@ -76,56 +92,42 @@
   <div id="deleteBookingDialog" title="Radera bokning?"></div>
 
   <script>
-    var auth2; //The Sign-In client object.
-    var initClient = function() {
-      gapi.load('auth2', function(){
-        gapi.auth2.init({
-          client_id: '208762726005-snfujhcqdcu40gkla949jlakd1pphmpk.apps.googleusercontent.com'
-        }).then(function(){
-          auth2 = gapi.auth2.getAuthInstance();
-          auth2.attachClickHandler('login_btn', {}, onSuccess, onFailure);
-          if(auth2.isSignedIn.get() == false) {
-            delete sessionStorage.idToken;
-            $("#logout_btn").hide();
-          }
-          else {
-            var user = auth2.currentUser.get();
-            sessionStorage.idToken = user.getAuthResponse().id_token;
-            $("#logout_btn").show();
-          }
-        });
-      });
-    };
-
     // Handle successful sign-ins.
-    var onSuccess = function(user) {
-      sessionStorage.idToken = user.getAuthResponse().id_token;
+    var onLoginSuccess = function(credentialResponse) {
+      sessionStorage.idToken = credentialResponse.credential;
+      document.cookie = "paxa_login_state=signedin";
+      console.log("Encoded JWT ID token: " + credentialResponse.credential);
+      $("#login_btn").hide();
+      $("#loggedin_lbl").show();
       $("#logout_btn").show();
       $("#error_field").hide();
     };
 
-    // Handle sign-in failures.
-    var onFailure = function(error) {
-      console.log(error);
-    };
-
-  </script>
-  <script src="https://apis.google.com/js/client.js?onload=initClient"></script>
-
-  <script>
-    function logoutSuccess() {
+    function signOut() {
+      google.accounts.id.disableAutoSelect();
+      document.cookie = "paxa_login_state=";
       $("#logout_btn").hide();
+      $("#loggedin_lbl").hide();
       location.reload(true);
     }
 
-    function logoutFailure() {
-      console.log("Failed to logout from Google!");
+    function checkIfSignedIn() {
+      if (document.cookie.split(';').some((item) => item.includes('paxa_login_state=signedin'))) {
+        return true;
+      }
+      return false;
     }
 
-    function signOut() {
-      var auth2 = gapi.auth2.getAuthInstance();
-      auth2.signOut().then(logoutSuccess, logoutFailure);
-      auth2.disconnect();
+    //Flytta if-satsen till document.ready nedan.
+    if(checkIfSignedIn()) {
+      console.log("INLOGGAD");
+      $("#login_btn").hide();
+      $("#logout_btn").show();
+    }
+    else {
+      console.log("DAGS ATT LOGGA IN");
+      $("#login_btn").show();
+      $("#logout_btn").hide();
     }
   </script>
 
@@ -143,6 +145,7 @@
       $("#booking_list").show();
       $("#booking_create").hide();
       $("#error_field").hide();
+      $("#loggedin_lbl").hide();
 
       loadExistingBookings(new Date());
 
