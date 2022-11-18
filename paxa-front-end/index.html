@@ -92,60 +92,22 @@
   <div id="deleteBookingDialog" title="Radera bokning?"></div>
 
   <script>
-    // Handle successful sign-ins.
-    var onLoginSuccess = function(credentialResponse) {
-      sessionStorage.idToken = credentialResponse.credential;
-      document.cookie = "paxa_login_state=signedin";
-      console.log("Encoded JWT ID token: " + credentialResponse.credential);
-      $("#login_btn").hide();
-      $("#loggedin_lbl").show();
-      $("#logout_btn").show();
-      $("#error_field").hide();
-    };
-
-    function signOut() {
-      google.accounts.id.disableAutoSelect();
-      document.cookie = "paxa_login_state=";
-      $("#logout_btn").hide();
-      $("#loggedin_lbl").hide();
-      location.reload(true);
-    }
-
-    function checkIfSignedIn() {
-      if (document.cookie.split(';').some((item) => item.includes('paxa_login_state=signedin'))) {
-        return true;
-      }
-      return false;
-    }
-
-    //Flytta if-satsen till document.ready nedan.
-    if(checkIfSignedIn()) {
-      console.log("INLOGGAD");
-      $("#login_btn").hide();
-      $("#logout_btn").show();
-    }
-    else {
-      console.log("DAGS ATT LOGGA IN");
-      $("#login_btn").show();
-      $("#logout_btn").hide();
-    }
-  </script>
-
-  <script>
     var MS_PER_MINUTE = 60000;
-    //var HOST_URL = "https://nightzero.duckdns.org:8443"
-    //var HOST_URL = "http://nightzero.duckdns.org:8080"
-    //var HOST_URL = "http://localhost:8080"
-    //var HOST_URL = "http://localhost:50260"
     var HOST_URL = "https://boka.ssdk-karlshamn.se/rest"
     var defaultStartTime = new Date();
     defaultStartTime.setHours(12, 0, 0, 0);
 
-    $(document).ready(function(){
+    $(document).ready(function() {
+      if(checkIfSignedIn()) {
+        toggleLogoinElements();
+      }
+      else {
+        toggleLogoutElements();
+      }
+
       $("#booking_list").show();
       $("#booking_create").hide();
       $("#error_field").hide();
-      $("#loggedin_lbl").hide();
 
       loadExistingBookings(new Date());
 
@@ -155,6 +117,41 @@
       //Reset timepickers to default value
       resetBookingFields();
     });
+
+    // Hantere google-login
+    var onLoginSuccess = function(credentialResponse) {
+      sessionStorage.idToken = credentialResponse.credential;
+      document.cookie = "paxa_login_state=signedin";
+      toggleLogoinElements();
+      $("#error_field").hide();
+    };
+
+    // Hantere google-logout
+    function signOut() {
+      google.accounts.id.disableAutoSelect();
+      document.cookie = "paxa_login_state=";
+      toggleLogoutElements();
+      location.reload(true);
+    }
+
+    function toggleLogoinElements() {
+      $("#login_btn").hide();
+      $("#logout_btn").show();
+      $("#loggedin_lbl").show();
+    }
+
+    function toggleLogoutElements() {
+      $("#login_btn").show();
+      $("#logout_btn").hide();
+      $("#loggedin_lbl").hide();
+    }
+
+    function checkIfSignedIn() {
+      if (document.cookie.split(';').some((item) => item.includes('paxa_login_state=signedin'))) {
+        return true;
+      }
+      return false;
+    }
 
     $("#date").datepicker({
       dateFormat: "yy-mm-dd",
