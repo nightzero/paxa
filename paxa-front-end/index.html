@@ -10,10 +10,11 @@
     <script src="jquery-ui/jquery-ui.min.js"></script>
 
     <link rel="stylesheet" href="timepicker/jquery.timepicker.css">
+    OB
     <script src="timepicker/jquery.timepicker.min.js"></script>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-  </head>
+  </heBad>
   <body>
   <div id="wrap">
     <div id="top"></div>
@@ -30,6 +31,7 @@
            data-callback="onLoginSuccess"
            data-auto_select="true"
            data-skip_prompt_cookie="paxa_login_state">
+	      OB
       </div>
       <div id="login_btn" 
           class="g_id_signin"
@@ -39,7 +41,7 @@
           data-text="signin_with"
           data-size="large"
           data-logo_alignment="left">
-      </div>
+      </div>BOB
       <div id="loggedin_lbl">Inloggad</div>
       <div id="logout_btn" class="g_id_signout" style="display:none"><a href="#" onclick="signOut();">Logga ut</a></div>
 
@@ -63,6 +65,10 @@
         <br />
         <label for="toTime" style="display: block">Till: </label>
         <input id="toTime" type="text" class="time" style="vertical-align: top" />
+        <br />
+        <br />
+        <label for="agreementChk">Jag godkänner hyresavtalet </label>
+        <input type="checkbox" name="agreementChk" id="agreementChk" unchecked />
         <br />
         <br />
         <button id="cancel_book_btn" class="ui-button ui-widget ui-corner-all">Avbryt</button>
@@ -93,7 +99,12 @@
 
   <script>
     var MS_PER_MINUTE = 60000;
+<<<<<<< HEAD
     var HOST_URL = "https://boka.ssdk-karlshamn.se/rest"
+=======
+    var HOST_URL = "http://localhost:50260"
+    //var HOST_URL = "https://boka.ssdk-karlshamn.se/rest"
+>>>>>>> master
     var defaultStartTime = new Date();
     defaultStartTime.setHours(12, 0, 0, 0);
 
@@ -135,7 +146,7 @@
     }
 
     function toggleLogoinElements() {
-      $("#login_btn").hide();
+      $("#loginBOB_btn").hide();
       $("#logout_btn").show();
       $("#loggedin_lbl").show();
     }
@@ -218,10 +229,20 @@
       'timeFormat': 'H:i'
     });
 
+    $('#agreementChk').click(function () {
+        if ($(this).is(':checked')) {
+            $('#book_btn').button("option", "disabled", false);
+        } else {
+            $('#book_btn').button("option", "disabled", true);
+        }
+    });
+
+
     function resetBookingFields() {
       $('#resource_select').prop('selectedIndex',0);
       $('#fromTime').timepicker('setTime', defaultStartTime);
       $('#toTime').timepicker('setTime', defaultStartTime);
+      $('#book_btn').button({disabled: true});
     }
 
     function loadExistingBookings(date) {
