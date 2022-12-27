@@ -1,6 +1,5 @@
 ﻿using Google.Apis.Auth;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +7,10 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using static paxa.Utilities.AuthenticationFilter;
 
 namespace paxa.Utilities
 {
@@ -17,7 +18,7 @@ namespace paxa.Utilities
     {
         private String CLIENT_ID = "208762726005-snfujhcqdcu40gkla949jlakd1pphmpk.apps.googleusercontent.com";
 
-        public override void OnActionExecuting(HttpActionContext filterContext)
+        public override async void OnActionExecuting(HttpActionContext filterContext)
         {
             var req = filterContext.Request;
             IEnumerable<string> authValues = req.Headers.GetValues("Authorization");
@@ -39,11 +40,16 @@ namespace paxa.Utilities
                 }
 
                 // Validate the token
-                validateToken(token, filterContext);
+                //validateToken(token, filterContext);
+                await validateTokenAsync(token, filterContext);
             }
             base.OnActionExecuting(filterContext);
         }
 
+        /**
+         * Gamla sättet att anropa authorization.
+         */
+        [Obsolete("validateToken is deprecated, please use validateTokenAsync instead.")]
         private void validateToken(String token, HttpActionContext filterContext)
         {
             try
@@ -71,6 +77,27 @@ namespace paxa.Utilities
                 {
                     filterContext.Response = filterContext.Request.CreateResponse(HttpStatusCode.Unauthorized, "Lyckades inte kontakta Google för autentisering. Har du loggat in?");
                 }
+            }
+            catch (Exception e)
+            {
+                filterContext.Response = filterContext.Request.CreateResponse(HttpStatusCode.Unauthorized, "Autentiseringsproblem: " + e.Message);
+            }
+        }
+
+        private async Task validateTokenAsync(String token, HttpActionContext filterContext)
+        {
+            var settings = new GoogleJsonWebSignature.ValidationSettings() { Audience = new List<string>() { CLIENT_ID } };
+
+            try
+            {
+                var validPayload = await GoogleJsonWebSignature.ValidateAsync(token, settings);
+                filterContext.Request.Properties.Add("ProfileId", validPayload.Subject);
+                filterContext.Request.Properties.Add("ProfileName", validPayload.Name);
+                filterContext.Request.Properties.Add("ProfileEmail", validPayload.Email);
+            }
+            catch (InvalidJwtException)
+            {
+                filterContext.Response = filterContext.Request.CreateResponse(HttpStatusCode.Unauthorized, "Lyckades inte kontakta Google för autentisering. Har du loggat in? ");
             }
             catch (Exception e)
             {
