@@ -10,7 +10,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
-using static paxa.Utilities.AuthenticationFilter;
 
 namespace paxa.Utilities
 {
@@ -18,7 +17,7 @@ namespace paxa.Utilities
     {
         private String CLIENT_ID = "208762726005-snfujhcqdcu40gkla949jlakd1pphmpk.apps.googleusercontent.com";
 
-        public override async void OnActionExecuting(HttpActionContext filterContext)
+        public override void OnActionExecuting(HttpActionContext filterContext)
         {
             var req = filterContext.Request;
             IEnumerable<string> authValues = req.Headers.GetValues("Authorization");
@@ -40,8 +39,7 @@ namespace paxa.Utilities
                 }
 
                 // Validate the token
-                //validateToken(token, filterContext);
-                await validateTokenAsync(token, filterContext);
+                validateTokenAsync(token, filterContext);
             }
             base.OnActionExecuting(filterContext);
         }
@@ -84,13 +82,15 @@ namespace paxa.Utilities
             }
         }
 
-        private async Task validateTokenAsync(String token, HttpActionContext filterContext)
+        private void validateTokenAsync(String token, HttpActionContext filterContext)
         {
             var settings = new GoogleJsonWebSignature.ValidationSettings() { Audience = new List<string>() { CLIENT_ID } };
 
             try
             {
-                var validPayload = await GoogleJsonWebSignature.ValidateAsync(token, settings);
+                //var validPayload = await GoogleJsonWebSignature.ValidateAsync(token, settings);
+                //Verkar vara problem med asynkrona anrop på serversidan. Hack för att undvika det.
+                var validPayload = Task.Run(() => GoogleJsonWebSignature.ValidateAsync(token, settings)).GetAwaiter().GetResult();
                 filterContext.Request.Properties.Add("ProfileId", validPayload.Subject);
                 filterContext.Request.Properties.Add("ProfileName", validPayload.Name);
                 filterContext.Request.Properties.Add("ProfileEmail", validPayload.Email);
